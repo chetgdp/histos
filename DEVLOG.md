@@ -390,3 +390,8 @@ why not do a simple style of building out one full simple error? like not enough
 
 ## cleaniup up for v0.0.1
 Used claude code to speed up three finalizing tasks: implementing the error suite I designed, from `Box dyn Error` to `HistosResult`, making as test suite, and commenting # Errors and # Examples for the documentation. 
+
+
+woo we released 0.0.1
+
+been working on this for a year now, super proud. now time to test it out in some workflows as part of a build pipeline!
