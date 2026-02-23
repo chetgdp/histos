@@ -29,8 +29,8 @@ for v0.0.2
     - calculator
 
 ## demos
-- [paleomap3d](https://afnleaf.github.com/planet)
-- [nousbase](https://chetgdp.github.io/blog)
+- [paleomap3d](https://afnleaf.github.io/planet)
+- [nousbase](https://chetgdp.github.io/notes)
 - [pokepack](https://afnleaf.github.io/pokepack)
 - [a game](https://afnleaf.github.io/mecha)
 

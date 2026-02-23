@@ -7,7 +7,6 @@ license = "MIT OR Apache-2.0"
 readme = "CRATES-IO.md"
 keywords = ["html", "pack", "binary", "wasm", "webassembly"]
 categories = ["command-line-utilities", "web-programming"]
-exclude = ["*.yaml"]
 include = [
     "src/**/*",
     "core/**/*",
@@ -16,6 +15,9 @@ include = [
     "LICENSE-MIT",
     "LICENSE-APACHE",
 ]
+repository = "https://github.com/chetgdp/histos"
+documentation = "https://docs.rs/histos"
+homepage = "https://chetgdp.github.io"
 
 [lib]
 name = "histos"
