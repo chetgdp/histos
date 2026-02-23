@@ -1,7 +1,6 @@
 # Histos
 weave all web dependencies into a single html file
 
-
 a new form of offline, OS agnostic, browser based application
 
 > *put the wasm in the base64 lil bro*
@@ -13,6 +12,12 @@ inlines brotli compressed + base64 encoded wasm inside `<pre>` tags
 uses a default runtime decoder to unpack itself
 
 first class wasm-pack support for **Rust** and `SINGLE_FILE=1` for **Emscripten/C**.
+
+## demos
+- [paleomap3d](https://afnleaf.github.io/planet)
+- [nousbase](https://chetgdp.github.io/notes)
+- [pokepack](https://afnleaf.github.io/pokepack)
+- [a game](https://afnleaf.github.io/mecha)
 
 ## examples
 for v0.0.2
@@ -27,12 +32,6 @@ for v0.0.2
 - Vanilla 
     - three.js
     - calculator
-
-## demos
-- [paleomap3d](https://afnleaf.github.io/planet)
-- [nousbase](https://chetgdp.github.io/notes)
-- [pokepack](https://afnleaf.github.io/pokepack)
-- [a game](https://afnleaf.github.io/mecha)
 
 ## config reference(llms.txt)
 ## SKILL.md(SKILL.md)
@@ -102,8 +101,6 @@ Paleomap3d is the main demo for this project. Ensuring Bevy ECS with WebGL and W
 - [ ] json manifest block
 - [ ] check signing
 - [] backwards compatability with browsers
-
-
 
 ### nice to have
 - [ ] support multiple favicon types
