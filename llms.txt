@@ -1,0 +1,211 @@
+# histos
+
+> Pack any web app — WASM, CSS, JS, HTML — into a single self-contained `index.html` file. Assets are brotli-compressed, base64-encoded, and inlined. The output requires no server, no CDN, and no internet connection to run.
+
+## What it does
+
+histos is a CLI tool that reads a YAML config file describing your web assets and produces a single portable `index.html`. WASM binaries are brotli-compressed and base64-encoded inside `<pre>` tags; the bundled runtime decoder unpacks them at load time using IndexedDB for caching. CSS files are concatenated and inlined. JavaScript and HTML fragments are inlined verbatim. Favicons are base64-encoded SVGs. The result is a fully offline, browser-runnable application in one file.
+
+## Install
+
+```bash
+cargo install histos
+```
+
+Requires Rust + Cargo. To compile WASM from source, also install `wasm-pack`.
+
+## CLI Usage
+
+```bash
+# Pack with default output (./index.html)
+histos config.yaml
+
+# Pack with explicit output path
+histos config.yaml --output ./dist/index.html
+histos config.yaml -o ./dist/index.html
+```
+
+## YAML Config Schema
+
+The config file has a single top-level key `pack`. All sub-keys are optional unless noted.
+
+```
+pack:
+  runtime:    RuntimeConfig       # controls which runtime assets are injected
+  metadata:   MetadataConfig      # HTML <head> metadata
+  favicon:    List[String]        # SVG favicon paths or URLs
+  css:        List[String]        # CSS file paths or URLs (concatenated in order)
+  html:       List[String]        # HTML fragment paths or URLs (inlined in order)
+  scripts:    List[String]        # JS file paths or URLs (inlined in order)
+  wasm:       Map[String → WasmModule]   # named WASM modules
+```
+
+### `pack.runtime`
+
+Controls which default runtime components are injected into the HTML output.
+
+| Key       | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `enabled` | bool | `true`  | Master switch. `false` disables all runtime injection and overrides other keys. |
+| `icon`    | bool | `true`  | Inject the default SVG loading icon. |
+| `core`    | bool | `true`  | Inject `core.js` — the main runtime loader that finds and executes the WASM module. |
+| `decoder` | bool | `true`  | Inject the brotli WASM decoder (`wasm_decoder.js` + `wasm_decoder_bg.wasm`). Required when using `compression: "brotli"`. |
+
+### `pack.metadata`
+
+HTML `<head>` metadata. All fields are optional strings. Defaults: `title` = `"histos"`, rest = empty.
+
+| Key           | Type   | Description |
+|---------------|--------|-------------|
+| `title`       | String | `<title>` and `<meta name="title">` |
+| `author`      | String | `<meta name="author">` |
+| `description` | String | `<meta name="description">` |
+| `keywords`    | String | `<meta name="keywords">` |
+
+### `pack.favicon`
+
+List of local file paths or HTTP/HTTPS URLs to SVG files. Each is base64-encoded and injected as `<link rel="icon">`.
+
+```yaml
+favicon:
+  - ./assets/icon.svg
+  - https://example.com/icon.svg
+```
+
+### `pack.css`
+
+List of local file paths or HTTP/HTTPS URLs to CSS files. All are fetched and concatenated into a single `<style>` block.
+
+```yaml
+css:
+  - ./styles/main.css
+  - https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css
+```
+
+### `pack.html`
+
+List of local file paths or HTTP/HTTPS URLs to HTML fragment files. Inlined verbatim into the document body.
+
+```yaml
+html:
+  - ./fragments/canvas.html
+```
+
+### `pack.scripts`
+
+List of local file paths or HTTP/HTTPS URLs to JavaScript files. Inlined verbatim inside `<script>` tags.
+
+```yaml
+scripts:
+  - ./src/init.js
+```
+
+### `pack.wasm.<name>`
+
+A map of named WASM modules. The map key (e.g. `module`, `app`) is only used internally for YAML grouping — it does not affect the output. The `id` field is what the runtime uses to locate the module.
+
+| Key            | Type   | Default          | Description |
+|----------------|--------|------------------|-------------|
+| `path`         | String | —                | Path to the wasm-pack project directory (parent of `pkg/`). If set, `binary` and `glue` are auto-discovered from `<path>/pkg/`. Mutually exclusive with explicit `binary`/`glue`. |
+| `binary`       | String | —                | Path or URL to the `.wasm` file. Used when `path` is not set. |
+| `glue`         | String | —                | Path or URL to the JS glue file. Used when `path` is not set. |
+| `id`           | String | `"bin-wasm-app"` | ID injected into the HTML. **Must be `"bin-wasm-app"`** when using the default runtime (`runtime.core = true`), because `core.js` looks for this ID to load the module. |
+| `compile_wasm` | bool   | `false`          | If `true`, runs `wasm-pack build --target no-modules` before packing. Requires `wasm-pack` on PATH. |
+| `compression`  | String | `"brotli"`       | Compression applied to the binary before base64 encoding. Values: `"brotli"` or `"none"`. Use `"none"` for already-compressed binaries. |
+
+**Asset path resolution:** Any string value for `favicon`, `css`, `html`, `scripts`, `binary`, or `glue` that starts with `https://` or `http://` is treated as a remote URL and fetched over HTTP. All other strings are treated as local file paths relative to the working directory where `histos` is invoked.
+
+---
+
+## Minimal Example (CSS + metadata only, no WASM)
+
+```yaml
+pack:
+  metadata:
+    title: "My App"
+    author: "Jane Doe"
+    description: "A simple static page"
+  html:
+    - ./index.html
+  scripts:
+    - ./app.js
+  css:
+    - ./style.css
+  runtime:
+    enabled: false
+```
+
+No WASM, no runtime decoder needed. Set `runtime.enabled: false` to produce a lean HTML file without the loader infrastructure.
+
+---
+
+## Full Example (WASM app with brotli compression)
+
+```yaml
+pack:
+  # Runtime is on by default — include all components
+  runtime:
+    enabled: true
+    icon: true
+    core: true
+    decoder: true
+
+  metadata:
+    title: "My WASM App"
+    author: "Jane Doe"
+    description: "A Rust/WASM application packed by histos"
+    keywords: "wasm, rust, offline"
+
+  favicon:
+    - ./assets/icon.svg
+
+  css:
+    - https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css
+    - ./styles/app.css
+
+  scripts:
+    - ./src/init.js
+
+  wasm:
+    app:
+      # path points to the wasm-pack project root (parent of pkg/)
+      path: ./my-wasm-project
+      # id MUST be "bin-wasm-app" when using the default runtime
+      id: "bin-wasm-app"
+      compile_wasm: false
+      compression: "brotli"
+```
+
+If you have already run `wasm-pack build --target no-modules`, the `pkg/` directory contains `*_bg.wasm` and `*.js` — histos auto-discovers them from `path`. Set `compile_wasm: true` to have histos run the build step itself.
+
+Alternatively, specify files explicitly without a `path`:
+
+```yaml
+  wasm:
+    app:
+      binary: ./my-wasm-project/pkg/my_app_bg.wasm
+      glue: ./my-wasm-project/pkg/my_app.js
+      id: "bin-wasm-app"
+      compression: "brotli"
+```
+
+---
+
+## Output
+
+histos writes a single `index.html` file (default: `./index.html`). The file is self-contained:
+- No external network requests at load time
+- No server required — open directly in a browser via `file://`
+- WASM binary is decoded from base64 and decompressed at runtime by the bundled brotli decoder
+- Decoded WASM is cached in IndexedDB to avoid re-decoding on subsequent loads
+
+---
+
+## Common Pitfalls
+
+- **Wrong `id`**: If using `runtime.core = true` (the default), the WASM module `id` **must** be `"bin-wasm-app"`. Any other value means `core.js` will not find the module and the app will not start.
+- **`compression: "brotli"` requires the decoder**: If `runtime.decoder = false` but `compression = "brotli"`, the WASM cannot be decoded. Either set `runtime.decoder: true` or use `compression: "none"`.
+- **`compile_wasm: true` requires `wasm-pack`**: Install with `cargo install wasm-pack`. If you already have a built `pkg/` directory, keep `compile_wasm: false`.
+- **`path` vs `binary`/`glue`**: Use `path` when you have a wasm-pack project directory. Use `binary`/`glue` when you have pre-built files at specific paths or remote URLs. Do not mix both for the same module.
+- **`metadata` not `meta`**: The YAML key for metadata is `metadata:`, not `meta:`.
+- **Local paths are relative to CWD**: Paths in the config are resolved relative to the directory from which `histos` is invoked, not the config file location.
