@@ -1,0 +1,59 @@
+## todo next
+- [ ] proper errors and propagation
+- [ ] working example
+    - Rust
+        - bevy
+        - blog
+        - pokepack?
+    - C
+        - raylib
+
+## todo 2026-01/02
+- [x] simple errors and propagation
+- [x] test suite
+- [x] LLM integration and tool calling
+- [x] verbose description of what is happening
+- [x] documentation
+    - [x] config reference (llms.txt)
+    - [x] rustdoc comments, cargo doc (public API: PackConfig, WasmModule, ...) 
+- [x] recheck lisence 
+- [x] README split to DEVLOG
+- [x] CRATES-IO.md
+
+## todo 2025-12-21
+- [x] clean up default runtime
+- [x] separate render and htmldoc
+- [x] simple library API
+    - [x] build PackConfig
+    - [x] build HtmlDoc with Strings
+
+## todo 2025-12-17
+- [x] small warning cleanup
+- [x] fix readme features/todos
+- [x] single path wasm module
+- [x] figure out name
+
+## todo 2025-12-16
+- [x] think of how to redesign cli and config
+- [x] implement cli change
+- [x] implement config change
+- [x] design builder -> (fetcher, encoder) -> htmldoc ?
+- [x] implement builder
+    - [x] implement fetcher
+    - [x] implement processer
+
+## todo 2025-12-15
+implementing the refactor. figured out how to group stuff together
+- [x] design final target (PackedHtml)
+- [x] design intermediate representation (HtmlDoc)
+- [x] implement PackedHtml
+- [x] implement HtmlDoc
+- [x] design then implement metadata struct
+
+## todo 2025-12-11->14
+container builder (pithos), cargo in the container (application)
+- [x] split repo into htmlpack and the product 
+- [x] need instructions on how to install the package easily
+- [x] read up on arena allocators, advanced memory? Data Oriented Design
+- [x] think about the next features and how to refactor with them in mind
+

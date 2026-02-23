@@ -1,0 +1,9 @@
+index.html
+*.html
+./target/
+./output/
+./core/loading.js
+./core/app.js
+./core/decoder.js
+.DS_Store
+./src_cpy/
