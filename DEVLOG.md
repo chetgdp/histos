@@ -388,7 +388,7 @@ save to file output html
 
 why not do a simple style of building out one full simple error? like not enough space on disk or whatever in save to file
 
-## cleaniup up for v0.0.1
+## cleanup up for v0.0.1
 Used claude code to speed up three finalizing tasks: implementing the error suite I designed, from `Box dyn Error` to `HistosResult`, making as test suite, and commenting # Errors and # Examples for the documentation. 
 
 
