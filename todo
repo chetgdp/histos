@@ -1,5 +1,6 @@
 ## todo next
 - [ ] proper errors and propagation
+- [ ] finish docs for what is missing?
 - [ ] working example
     - Rust
         - bevy
