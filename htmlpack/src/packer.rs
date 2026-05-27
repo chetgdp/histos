@@ -1,4 +1,4 @@
-/*
+/
 * packer.rs
 *
 * the main packing logic
@@ -104,7 +104,10 @@ pub async fn load_config(config_path: PathBuf) -> HistosResult<PackConfig> {
             _ => ConfigError::ReadFailed { path: config_path.clone(), source },
         })?;
     let yaml_root: YamlRoot = serde_yaml::from_str(&yaml_text)
-        .map_err(ConfigError::YamlParse)?;
+        .map_err(|e| ConfigError::YamlParse {
+            path: config_path.clone(),
+            source: e,
+        })?;
     let config: PackConfig = yaml_root.pack.try_into()?;
     eprintln!("Loaded config");
     Ok(config)

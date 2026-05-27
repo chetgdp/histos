@@ -14,28 +14,30 @@ uses a default runtime decoder to unpack itself
 first class wasm-pack support for **Rust** and `SINGLE_FILE=1` for **Emscripten/C**.
 
 ## demos
-- [paleomap3d](https://afnleaf.github.io/planet)
-- [nousbase](https://chetgdp.github.io/notes)
-- [pokepack](https://afnleaf.github.io/pokepack)
-- [a game](https://afnleaf.github.io/mecha)
+- [paleomap3d](https://afnleaf.github.io/planet) *requires webgpu*
+- [nousbase](https://chetgdp.github.io/notes) *rust markdown ssg*
+- [pokepack](https://afnleaf.github.io/pokepack) *bitpacking format*
+- [a 2d game](https://afnleaf.github.io/mecha) *raylib*
 
 ## examples
 for v0.0.2
 - [] hello world examples of code
 - Rust
     - basic
-    - blog
-    - bevy 
+    - [blogpost](https://chetgdp.github.io/notes#/TECH/README.md)
+    - [paleomap 3d - bevy]
 - C
     - basic
-    - 
+    - [game](https://afnleaf.github.io/mecha)
 - Vanilla 
     - three.js
+        - [pixel.ai](https://afnleaf.github.io/pixel.ai) 
+        - [three.wasm demo]()
     - calculator
 
-## config reference(llms.txt)
-## SKILL.md(SKILL.md)
-## DEVLOG(DEVLOG.md)
+### [config reference](llms.txt)
+### [SKILL.md](SKILL.md)
+### [DEVLOG](DEVLOG.md)
 
 ## resources
 What helped build the data transformation pipeline

@@ -8,6 +8,9 @@
         - pokepack?
     - C
         - raylib
+-------
+- [] initialize as 0, base config is a passable case, histos always outputs an html file and its own output with warnings about. how does this affect people who use the tool? how do they parse the errors and continue?
+- [] watch mode
 
 ## todo 2026-01/02
 - [x] simple errors and propagation

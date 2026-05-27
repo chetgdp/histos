@@ -58,7 +58,14 @@ pub enum ConfigError {
     },
     
     #[error("invalid YAML in config")]
-    YamlParse(#[from] serde_yaml::Error),
+    YamlParse {
+        path: PathBuf,
+        #[source]
+        source: serde_yaml::Error,
+    },
+    //YamlParse(
+    //    #[from] serde_yaml::Error
+    //),
     
     #[error("pkg directory not found: {path}")]
     PkgDirNotFound { path: PathBuf },
