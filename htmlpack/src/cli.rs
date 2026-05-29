@@ -83,5 +83,9 @@ pub struct Cli {
     /// output file path with default
     #[arg(short, long, default_value = "./index.html")]
     pub output: PathBuf,
+
+    /// watch mode, hot reload
+    #[arg(short, long, default_value = "true")]
+    pub watch: bool,
 }
 

@@ -1,4 +1,4 @@
-/
+/*
 * packer.rs
 *
 * the main packing logic
@@ -70,6 +70,7 @@ pub async fn run() -> HistosResult<()> {
     let cli = Cli::parse();
     eprintln!("Config: {}", cli.config.display());
     eprintln!("Output: {}", cli.output.display());
+    println!("WATCH MODE: {}", cli.watch);
 
     // oh yeah this feels good
     load_config(cli.config).await?
