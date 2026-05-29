@@ -41,8 +41,9 @@ pub enum HistosError {
     #[error("save error: {0}")]
     Save(#[from] SaveError),
     
-    #[error("internal error: {0}")]
-    Internal(String),
+    // remove for now to see real panics and not cover them up
+    //#[error("internal error: {0}")]
+    //Internal(String),
 }
 
 #[derive(Error, Debug)]
@@ -152,3 +153,11 @@ pub enum SaveError {
     },
 }
 
+// not yet
+//#[derive(Error, Debug)]
+//pub enum FileSystemError {
+//    #[error("file not found at: {path}")]
+//    NotFound {
+//        path: PathBuf,
+//    }
+//}

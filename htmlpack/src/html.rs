@@ -168,6 +168,7 @@ impl HtmlDoc {
     /// let packed = doc.render();
     /// ```
     // head + body combine into final html page
+    // fix this to give a result, cause it can fail
     pub fn render(self) -> PackedHtml {
         render_to_packed(self)
     }

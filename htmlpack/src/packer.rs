@@ -100,8 +100,13 @@ pub async fn run() -> HistosResult<()> {
 pub async fn load_config(config_path: PathBuf) -> HistosResult<PackConfig> {
     let yaml_text = fs::read_to_string(&config_path)
         .map_err(|source| match source.kind() {
-            std::io::ErrorKind::NotFound => ConfigError::FileNotFound { path: config_path.clone() },
-            _ => ConfigError::ReadFailed { path: config_path.clone(), source },
+            // consolidate to FileSystemError
+            std::io::ErrorKind::NotFound => ConfigError::FileNotFound { 
+                path: config_path.clone() 
+            },
+            _ => ConfigError::ReadFailed { 
+                path: config_path.clone(), source 
+            },
         })?;
     let yaml_root: YamlRoot = serde_yaml::from_str(&yaml_text)
         .map_err(|e| ConfigError::YamlParse {

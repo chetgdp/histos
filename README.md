@@ -146,15 +146,15 @@ cargo install --path .
 cargo install --path . --force
 
 // allows you to run with 
-pithos --help
-pithos config.yaml
+histos --help
+histos config.yaml
 
 // check version
-which pithos // unix/macos
-where pithos // windows
+which histos // unix/macos
+where histos // windows
 
 // uninstall
-cargo uninstall pithos
+cargo uninstall histos
 
 // run without install
 cargo run -- config.yaml

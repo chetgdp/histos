@@ -28,8 +28,13 @@ use crate::error::{HistosResult, FetchError};
 /// ```
 pub fn get_local_file(path: &PathBuf) -> HistosResult<Vec<u8>> {
     std::fs::read(path).map_err(|source| match source.kind() {
-        std::io::ErrorKind::NotFound => FetchError::LocalNotFound { path: path.clone() }.into(),
-        _ => FetchError::LocalRead { path: path.clone(), source }.into(),
+        // consolidate to FileSystemError
+        std::io::ErrorKind::NotFound => FetchError::LocalNotFound { 
+            path: path.clone() 
+        }.into(),
+        _ => FetchError::LocalRead { 
+            path: path.clone(), source 
+        }.into(),
     })
 }
 
@@ -49,7 +54,9 @@ pub fn get_local_file(path: &PathBuf) -> HistosResult<Vec<u8>> {
 pub async fn get_remote_file(url: Url) -> HistosResult<Vec<u8>> {
     let response = reqwest::get(url.clone())
         .await
-        .map_err(|source| FetchError::HttpRequest { url: url.to_string(), source })?;
+        .map_err(|source| FetchError::HttpRequest { 
+            url: url.to_string(), source 
+        })?;
 
     if !response.status().is_success() {
         return Err(FetchError::HttpStatus {
@@ -61,7 +68,9 @@ pub async fn get_remote_file(url: Url) -> HistosResult<Vec<u8>> {
     response.bytes()
         .await
         .map(|b| b.to_vec())
-        .map_err(|source| FetchError::HttpRequest { url: url.to_string(), source }.into())
+        .map_err(|source| FetchError::HttpRequest { 
+            url: url.to_string(), source 
+        }.into())
 }
 
 /// Uses the AssetSource enum to match local vs remote files.
