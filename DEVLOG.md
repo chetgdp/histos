@@ -401,4 +401,28 @@ Internal error, lets let panics and crashes through? so we disable it.
 
 FetchError::LocalNotFound and ConfigError::FileNotFound do the same thing. Consolidate as FileSystemError::FileNotFound, we pause on this.
 
+have to improve core.js so that you arent required to have a wasm_bindgen(start)
+
+make the bin-wasm-app thing more clear
+
+compile_wasm true doesn't work on first time cause the pkg folder doesn't exist.
+
 ## watch mode (hot reaload)
+
+this turns the program from a single pass into something that monitors each file that is defined in the config. Then it runs a pass after any file it is monitoring is updated. But the pass has to be a smart pass, where not every file is fetched again, it has to be only the new file, the rest can sit in memory or more specifically as a html struct we have defined.
+
+to be able to do this we need to keep track of every origin point and have some kind of file handle on it that checks if it updated. maybe a timestamp?
+notify crate is what handles this. 
+
+What we need is to hold the Assets somehow. 
+
+an array that holds the asset strings, then the Asset struct holds their index?
+
+
+im trying to figure out the shape of the data here. so I would probably need to add some code regarding AssetSource. It has to point to some kind of cached version? Or no, AssetSource is at the config level. 
+
+yaml text -> PackConfig -> htmldoc -> render
+
+we need some type of cache zone where the watcher also live like
+
+pathbuf + cache (processed) + watch? 

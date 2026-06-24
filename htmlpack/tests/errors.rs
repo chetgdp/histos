@@ -28,7 +28,7 @@ async fn config_yaml_parse_error() {
     let result = packer::load_config(path).await;
     assert!(matches!(
         result,
-        Err(HistosError::Config(ConfigError::YamlParse(_)))
+        Err(HistosError::Config(ConfigError::YamlParse { .. }))
     ));
 }
 

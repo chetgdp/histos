@@ -98,7 +98,9 @@ pub async fn run() -> HistosResult<()> {
 /// ```no_run
 /// let config = load_config(PathBuf::from("config.yaml")).await?;
 /// ```
-pub async fn load_config(config_path: PathBuf) -> HistosResult<PackConfig> {
+pub async fn load_config(
+    config_path: PathBuf
+) -> HistosResult<PackConfig> {
     let yaml_text = fs::read_to_string(&config_path)
         .map_err(|source| match source.kind() {
             // consolidate to FileSystemError
@@ -156,8 +158,10 @@ fn default_runtime(
         // decoder wasm binary
         //let wasm_hash = Sha256::digest(RUNTIME_DECODER_WASM);
         //let wasm_hash_string = format!("{:x}", wasm_hash);
-        let wasm_hash_string = encoder::hash_encode(RUNTIME_DECODER_WASM);
-        let wasm_encoded_text = BASE64_STANDARD.encode(RUNTIME_DECODER_WASM);
+        let wasm_hash_string = 
+            encoder::hash_encode(RUNTIME_DECODER_WASM);
+        let wasm_encoded_text = 
+            BASE64_STANDARD.encode(RUNTIME_DECODER_WASM);
         let decoder_module = EncodedWasm {
             id: DEFAULT_DECODER_ID.to_string(),
             hash: wasm_hash_string,
@@ -209,7 +213,7 @@ impl PackConfig {
 
         let favicon_bytes = fetcher::fetch_all_sources(self.favicon).await?;
         let style_bytes = fetcher::fetch_all_sources(self.styles).await?;
-        let mut script_bytes =  fetcher::fetch_all_sources(self.scripts).await?;
+        let mut script_bytes = fetcher::fetch_all_sources(self.scripts).await?;
         let html_bytes = fetcher::fetch_all_sources(self.html).await?;
         let wasm_bytes = fetcher::fetch_all_sources(wasm_bin_vec).await?;
         let wasm_glue_bytes = fetcher::fetch_all_sources(wasm_glue_vec).await?;
@@ -218,7 +222,9 @@ impl PackConfig {
 
         // OPERATION 3: PROCESS
         let favicons = process_icons(favicon_bytes)?;
-        let styles = process_styles(style_bytes)?;
+        //let styles = process_styles(style_bytes)?;
+        // unflatten, I think this works.
+        let styles = process_text(style_bytes)?;
         let scripts = process_text(script_bytes)?;
         let html_shards = process_text(html_bytes)?;
         let mut encoded_wasm = process_wasm(wasm_bytes, &self.wasm)?;
@@ -294,17 +300,22 @@ fn process_text(bytes: Vec<Vec<u8>>) -> HistosResult<Vec<String>> {
     */
 }
 
-fn process_styles(bytes: Vec<Vec<u8>>) -> HistosResult<String> {
-    process_text(bytes).map(|strings| strings.join(""))
-}
+//fn process_styles(bytes: Vec<Vec<u8>>) -> HistosResult<String> {
+//    process_text(bytes).map(|strings| strings.join(""))
+//}
 
-fn process_wasm(bytes: Vec<Vec<u8>>, modules: &[WasmModule]) -> HistosResult<Vec<EncodedWasm>> {
+fn process_wasm(
+    bytes: Vec<Vec<u8>>, 
+    modules: &[WasmModule]
+) -> HistosResult<Vec<EncodedWasm>> {
     bytes
         .into_iter()
         .zip(modules.iter())
         .map(|(b, m)| {
             let compressed_buffer = match m.compression {
-                CompressionType::Brotli => { encoder::brotli_encode(&b)? },
+                CompressionType::Brotli => { 
+                    encoder::brotli_encode(&b)? 
+                },
                 _ => { b }
             };
             //let hash = Sha256::digest(&compressed_buffer);

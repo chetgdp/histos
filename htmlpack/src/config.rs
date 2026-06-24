@@ -46,8 +46,9 @@ pub enum CompressionType {
     None,
 }
 
+// were on team "Big Struct"
 // these are the configuration options
-// this defines the source files that will be built
+// defines the source files that will be built
 #[derive(Debug)]
 pub struct PackConfig {
     pub runtime:        RuntimeConfig,
@@ -280,7 +281,9 @@ fn determine_compression_type(s: String) -> CompressionType {
 fn get_pkg_files(pkg_dir: &PathBuf) -> Result<(PathBuf, PathBuf), ConfigError> {
     let file_entries = std::fs::read_dir(pkg_dir)
         .map_err(|source| match source.kind() {
-            std::io::ErrorKind::NotFound => ConfigError::PkgDirNotFound { path: pkg_dir.clone() },
+            std::io::ErrorKind::NotFound => ConfigError::PkgDirNotFound { 
+                path: pkg_dir.clone() 
+            },
             _ => ConfigError::PkgDirRead { path: pkg_dir.clone(), source },
         })?;
 
@@ -478,7 +481,11 @@ impl PackConfig {
     /// let config = PackConfig::new()
     ///     .add_wasm_pkg("bin-wasm-app".into(), "./my-wasm-crate".into())?;
     /// ```
-    pub fn add_wasm_pkg(mut self, id: String, path: String) -> HistosResult<Self> {
+    pub fn add_wasm_pkg(
+        mut self, 
+        id: String,
+        path: String
+    ) -> HistosResult<Self> {
         let module = WasmModule::from_pkg(id, path, false, "brotli".into())?;
         self.wasm.push(module);
         Ok(self)

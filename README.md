@@ -102,7 +102,9 @@ Paleomap3d is the main demo for this project. Ensuring Bevy ECS with WebGL and W
 - [ ] reproducible builds/deterministic output
 - [ ] json manifest block
 - [ ] check signing
-- [] backwards compatability with browsers
+- [ ] output allowed to overwrite input files with no warning 
+- [ ] backwards compatability with browsers
+- [ ] documentation on ordering of how the html is woven together
 
 ### nice to have
 - [ ] support multiple favicon types

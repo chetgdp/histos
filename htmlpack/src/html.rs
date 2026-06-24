@@ -30,7 +30,7 @@ pub struct HtmlHead {
     pub metadata: HtmlMetadata,
     // assets
     pub favicon: Vec<EncodedIcon>,
-    pub css: String, // flatten the css
+    pub css: Vec<String>, // flatten the css // unflatten the css
 }
 
 #[derive(Debug)]
@@ -130,7 +130,7 @@ impl HtmlDoc {
         description: String,
         keywords: String,
         favicon: Vec<EncodedIcon>,
-        css: String,
+        css: Vec<String>,
         // body
         encoded_wasm: Vec<EncodedWasm>,
         js_scripts: Vec<String>,
@@ -191,7 +191,7 @@ impl HtmlDoc {
             "".into(),
             "".into(),
             vec![],
-            "".into(),
+            vec![],
             vec![],
             vec![],
             vec![],
@@ -292,8 +292,9 @@ impl HtmlDoc {
     /// let doc = HtmlDoc::empty().add_css("body { margin: 0; }");
     /// ```
     pub fn add_css(mut self, css: impl Into<String>) -> Self {
-        self.head.css.push_str(&css.into());
-        self.head.css.push('\n');
+        //self.head.css.push_str(&css.into());
+        //self.head.css.push('\n');
+        self.head.css.push(css.into());
         self
     } 
     

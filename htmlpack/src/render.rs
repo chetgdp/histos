@@ -46,7 +46,7 @@ fn render_head(head: HtmlHead) -> Markup {
         "\n"
         (render_favicons(head.favicon))
         "\n"
-        style { "\n"(head.css)"\n" }
+        (render_styles(head.css))
         "\n"
     }
 }
@@ -108,6 +108,16 @@ fn render_favicons(favicons: Vec<EncodedIcon>) -> Markup {
         }
     } else {
         html! {
+            "\n"
+        }
+    }
+}
+
+fn render_styles(css: Vec<String>) -> Markup {
+    html! {
+        @for s in &css {
+            "\n"
+            style { (PreEscaped(s)) }
             "\n"
         }
     }
