@@ -68,7 +68,8 @@ impl EncodedWasm {
     /// # Examples
     ///
     /// ```
-    /// let wasm = EncodedWasm::new("bin-wasm-app".into(), hash_hex, base64_text);
+    /// # use histos::html::EncodedWasm;
+    /// let wasm = EncodedWasm::new("bin-wasm-app".into(), "abc123".into(), "AGFzbQ==".into());
     /// ```
     pub fn new(id: String, hash: String, text: String) -> Self {
         Self {
@@ -95,7 +96,8 @@ impl EncodedIcon {
     /// # Examples
     ///
     /// ```
-    /// let icon = EncodedIcon::new("svg+xml".into(), "base64".into(), encoded_svg);
+    /// # use histos::html::EncodedIcon;
+    /// let icon = EncodedIcon::new("svg+xml".into(), "base64".into(), "PHN2Zz48L3N2Zz4=".into());
     /// ```
     pub fn new(mime_type: String, encoding: String, text: String) -> Self {
         Self {
@@ -118,9 +120,10 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::new(
     ///     "My App".into(), "Author".into(), "desc".into(), "kw".into(),
-    ///     vec![], String::new(), vec![], vec![], vec![],
+    ///     vec![], vec![], vec![], vec![], vec![],
     /// );
     /// ```
         pub fn new(
@@ -164,8 +167,9 @@ impl HtmlDoc {
     ///
     /// # Examples
     ///
-    /// ```no_run
-    /// let packed = doc.render();
+    /// ```
+    /// # use histos::html::HtmlDoc;
+    /// let packed = HtmlDoc::empty().render();
     /// ```
     // head + body combine into final html page
     // fix this to give a result, cause it can fail
@@ -181,6 +185,7 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::empty();
     /// ```
     // need empty htmldoc
@@ -213,6 +218,7 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::empty().with_title("My App");
     /// ```
     pub fn with_title(mut self, title: impl Into<String>) -> Self {
@@ -228,6 +234,7 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::empty().with_author("Jane");
     /// ```
     pub fn with_author(mut self, author: impl Into<String>) -> Self {
@@ -243,6 +250,7 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::empty().with_description("A short description");
     /// ```
     pub fn with_description(mut self, description: impl Into<String>) -> Self {
@@ -258,6 +266,7 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::empty().with_keywords("rust, wasm, app");
     /// ```
     pub fn with_keywords(mut self, keywords: impl Into<String>) -> Self {
@@ -274,6 +283,7 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::empty().add_html("<div>hello</div>");
     /// ```
     pub fn add_html(mut self, shard: impl Into<String>) -> Self {
@@ -289,6 +299,7 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::empty().add_css("body { margin: 0; }");
     /// ```
     pub fn add_css(mut self, css: impl Into<String>) -> Self {
@@ -306,6 +317,7 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
+    /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::empty().add_script("console.log('hello')");
     /// ```
     pub fn add_script(mut self, script: impl Into<String>) -> Self {
@@ -321,7 +333,8 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
-    /// let icon = EncodedIcon::new("svg+xml".into(), "base64".into(), encoded_svg);
+    /// # use histos::html::{HtmlDoc, EncodedIcon};
+    /// let icon = EncodedIcon::new("svg+xml".into(), "base64".into(), "PHN2Zz48L3N2Zz4=".into());
     /// let doc = HtmlDoc::empty().add_favicon(icon);
     /// ```
     pub fn add_favicon(mut self, favicon: EncodedIcon) -> Self {
@@ -337,7 +350,8 @@ impl HtmlDoc {
     /// # Examples
     ///
     /// ```
-    /// let wasm = EncodedWasm::new("bin-wasm-app".into(), hash_hex, base64_text);
+    /// # use histos::html::{HtmlDoc, EncodedWasm};
+    /// let wasm = EncodedWasm::new("bin-wasm-app".into(), "abc123".into(), "AGFzbQ==".into());
     /// let doc = HtmlDoc::empty().add_wasm(wasm);
     /// ```
     pub fn add_wasm(mut self, wasm: EncodedWasm) -> Self {

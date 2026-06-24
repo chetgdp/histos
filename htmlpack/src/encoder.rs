@@ -35,6 +35,7 @@ use crate::error::{HistosResult, EncodeError};
 /// # Examples
 ///
 /// ```
+/// # use histos::encoder::base64_encode;
 /// let encoded = base64_encode(b"hello world");
 /// ```
 pub fn base64_encode(buffer: &[u8]) -> String {
@@ -51,8 +52,12 @@ pub fn base64_encode(buffer: &[u8]) -> String {
 ///
 /// # Examples
 ///
-/// ```no_run
-/// let compressed = brotli_encode(wasm_bytes)?;
+/// ```
+/// # use histos::encoder::brotli_encode;
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// let compressed = brotli_encode(b"hello world")?;
+/// # Ok(())
+/// # }
 /// ```
 pub fn brotli_encode(
     buffer: &[u8]
@@ -86,6 +91,7 @@ pub fn brotli_encode(
 /// # Examples
 ///
 /// ```
+/// # use histos::encoder::hash_encode;
 /// let hex = hash_encode(b"hello");
 /// ```
 pub fn hash_encode(buffer: &[u8]) -> String {

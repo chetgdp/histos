@@ -24,8 +24,10 @@ use crate::html::*;
 ///
 /// # Examples
 ///
-/// ```no_run
-/// let packed = render_to_packed(doc);
+/// ```
+/// # use histos::render::render_to_packed;
+/// # use histos::html::HtmlDoc;
+/// let packed = render_to_packed(HtmlDoc::empty());
 /// ```
 pub fn render_to_packed(doc: HtmlDoc) -> PackedHtml {
     let markup = html! {
@@ -203,7 +205,13 @@ impl PackedHtml {
     /// # Examples
     ///
     /// ```no_run
+    /// # use histos::render::PackedHtml;
+    /// # use std::path::PathBuf;
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// let packed = PackedHtml { html: String::from("<html></html>") };
     /// packed.save_to_file(PathBuf::from("dist/index.html"))?;
+    /// # Ok(())
+    /// # }
     /// ```
     // save our string to an html file
     pub fn save_to_file(self, output: PathBuf) -> HistosResult<()> {

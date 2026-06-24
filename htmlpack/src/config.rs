@@ -348,6 +348,7 @@ impl PackConfig {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::PackConfig;
     /// let config = PackConfig::new();
     /// ```
     pub fn new() -> Self {
@@ -362,6 +363,7 @@ impl PackConfig {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::PackConfig;
     /// let config = PackConfig::new()
     ///     .set_metadata("My App".into(), "Author".into(), "A description".into(), "rust, wasm".into());
     /// ```
@@ -389,6 +391,7 @@ impl PackConfig {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::PackConfig;
     /// let config = PackConfig::new().set_runtime(true, true, true, false);
     /// ```
     pub fn set_runtime(
@@ -415,6 +418,7 @@ impl PackConfig {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::PackConfig;
     /// let config = PackConfig::new().add_style("styles/app.css".into());
     /// ```
     pub fn add_style(mut self, path: String) -> Self {
@@ -430,6 +434,7 @@ impl PackConfig {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::PackConfig;
     /// let config = PackConfig::new().add_script("js/app.js".into());
     /// ```
     pub fn add_script(mut self, path: String) -> Self {
@@ -445,6 +450,7 @@ impl PackConfig {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::PackConfig;
     /// let config = PackConfig::new().add_html("fragment.html".into());
     /// ```
     pub fn add_html(mut self, path: String) -> Self {
@@ -459,7 +465,8 @@ impl PackConfig {
     ///
     /// # Examples
     ///
-    /// ```no_run
+    /// ```
+    /// # use histos::config::{PackConfig, WasmModule};
     /// let module = WasmModule::default();
     /// let config = PackConfig::new().add_wasm(module);
     /// ```
@@ -478,8 +485,12 @@ impl PackConfig {
     /// # Examples
     ///
     /// ```no_run
+    /// # use histos::config::PackConfig;
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// let config = PackConfig::new()
     ///     .add_wasm_pkg("bin-wasm-app".into(), "./my-wasm-crate".into())?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn add_wasm_pkg(
         mut self, 
@@ -503,12 +514,16 @@ impl WasmModule {
     /// # Examples
     ///
     /// ```no_run
+    /// # use histos::config::WasmModule;
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// let module = WasmModule::from_pkg(
     ///     "bin-wasm-app".into(),
     ///     "./my-crate".into(),
     ///     false,
     ///     "brotli".into(),
     /// )?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn from_pkg(
         id: String,
@@ -537,6 +552,7 @@ impl WasmModule {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::WasmModule;
     /// let module = WasmModule::set_manually(
     ///     "bin-wasm-app".into(),
     ///     "./pkg/app_bg.wasm".into(),
@@ -570,6 +586,7 @@ impl WasmModule {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::WasmModule;
     /// let module = WasmModule::default().with_id("my-app".into());
     /// ```
     pub fn with_id(mut self, id: String) -> Self {
@@ -585,6 +602,7 @@ impl WasmModule {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::WasmModule;
     /// let module = WasmModule::default().with_compile(true);
     /// ```
     pub fn with_compile(mut self, flag: bool) -> Self {
@@ -600,6 +618,7 @@ impl WasmModule {
     /// # Examples
     ///
     /// ```
+    /// # use histos::config::WasmModule;
     /// let module = WasmModule::default().with_compression("none".into());
     /// ```
     pub fn with_compression(mut self, compression: String) -> Self {

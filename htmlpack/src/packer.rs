@@ -62,8 +62,12 @@ const DEFAULT_ICON_ENCODING: &str = "base64";
 /// - Returns [`HistosResult`] every kind of error as defined.
 /// 
 /// # Examples
-/// ```
+/// ```no_run
+/// # use histos::packer;
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 /// packer::run().await?;
+/// # Ok(())
+/// # }
 /// ```
 pub async fn run() -> HistosResult<()> {
     // parse CLI
@@ -96,7 +100,12 @@ pub async fn run() -> HistosResult<()> {
 /// # Examples
 ///
 /// ```no_run
+/// # use histos::packer::load_config;
+/// # use std::path::PathBuf;
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 /// let config = load_config(PathBuf::from("config.yaml")).await?;
+/// # Ok(())
+/// # }
 /// ```
 pub async fn load_config(
     config_path: PathBuf
@@ -190,7 +199,12 @@ impl PackConfig {
     /// # Examples
     ///
     /// ```no_run
+    /// # use histos::config::PackConfig;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// let config = PackConfig::new();
     /// let doc = config.build().await?;
+    /// # Ok(())
+    /// # }
     /// ```
     pub async fn build(self) -> HistosResult<HtmlDoc> {
         // OPERATION 1: COMPILE

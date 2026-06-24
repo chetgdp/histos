@@ -24,7 +24,12 @@ use crate::error::{HistosResult, FetchError};
 /// # Examples
 ///
 /// ```no_run
+/// # use histos::fetcher::get_local_file;
+/// # use std::path::PathBuf;
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let bytes = get_local_file(&PathBuf::from("style.css"))?;
+/// # Ok(())
+/// # }
 /// ```
 pub fn get_local_file(path: &PathBuf) -> HistosResult<Vec<u8>> {
     std::fs::read(path).map_err(|source| match source.kind() {
@@ -49,7 +54,13 @@ pub fn get_local_file(path: &PathBuf) -> HistosResult<Vec<u8>> {
 /// # Examples
 ///
 /// ```no_run
+/// # use histos::fetcher::get_remote_file;
+/// # use url::Url;
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let url = Url::parse("https://example.com/style.css")?;
 /// let bytes = get_remote_file(url).await?;
+/// # Ok(())
+/// # }
 /// ```
 pub async fn get_remote_file(url: Url) -> HistosResult<Vec<u8>> {
     let response = reqwest::get(url.clone())
@@ -83,7 +94,12 @@ pub async fn get_remote_file(url: Url) -> HistosResult<Vec<u8>> {
 /// # Examples
 ///
 /// ```no_run
+/// # use histos::fetcher::fetch_source;
+/// # use histos::config::AssetSource;
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 /// let bytes = fetch_source(AssetSource::Local("style.css".into())).await?;
+/// # Ok(())
+/// # }
 /// ```
 pub async fn fetch_source(source: AssetSource) -> HistosResult<Vec<u8>> {
     match source {
@@ -107,9 +123,14 @@ pub async fn fetch_source(source: AssetSource) -> HistosResult<Vec<u8>> {
 ///
 /// # Examples
 ///
-/// ```
+/// ```no_run
+/// # use histos::fetcher::fetch_all_sources;
+/// # use histos::config::AssetSource;
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 /// let sources = vec![AssetSource::Local("style.css".into())];
 /// let bytes = fetch_all_sources(sources).await?;
+/// # Ok(())
+/// # }
 /// ```
 pub async fn fetch_all_sources(sources: Vec<AssetSource>) -> HistosResult<Vec<Vec<u8>>> {
     let mut results = Vec::new();
