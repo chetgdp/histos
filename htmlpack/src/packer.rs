@@ -21,6 +21,7 @@ then encode it in base64
 // standard
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::time::Duration;
 // external
 use clap::{Parser};
 use base64::prelude::*;
@@ -32,6 +33,8 @@ use crate::config::{
     RuntimeConfig,
     //MetadataConfig, // why this not used?
 };
+use notify::RecursiveMode;
+use notify_debouncer_full::{new_debouncer, DebounceEventResult};
 // local
 use crate::cli::{YamlRoot, Cli};
 use crate::encoder;
@@ -98,6 +101,30 @@ async fn run_watch_mode(cli: Cli) -> HistosResult<()> {
     println!("WATCH MODE HELLO");
     let config = load_config(&cli.config).await?;
     let paths = local_paths(&config);
+    println!("watching\n{:#?}", paths);
+
+    let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel();
+    let mut debouncer = new_debouncer(
+        Duration::from_millis(500),
+        None,
+        move |res: DebounceEventResult| { let _ = tx.send(res); },
+    )?;
+
+    for path in &paths {
+        debouncer.watch(path, RecursiveMode::NonRecursive)?;
+    }
+
+    while let Some(res) = rx.recv().await {
+        match res {
+            Ok(events) => {
+                println!("change ({} events -> rebuilding)", events.len());
+                if let Err(e) = build_once(&cli).await {
+                    eprintln!("rebuild failed: {e}");
+                }
+            }
+            Err(errors) => for e in errors { eprintln!("watch error: {e}"); },
+        }
+    }
         
     Ok(())
 }

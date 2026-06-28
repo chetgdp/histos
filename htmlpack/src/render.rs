@@ -231,6 +231,7 @@ impl PackedHtml {
             .map_err(|source| SaveError::WriteFile { 
                 path: output.to_path_buf(), source 
             })?;
+        println!("saved to file {:#?}", output);
 
         Ok(())
     }

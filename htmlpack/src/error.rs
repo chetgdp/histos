@@ -40,6 +40,9 @@ pub enum HistosError {
     
     #[error("save error: {0}")]
     Save(#[from] SaveError),
+
+    #[error("watch error: {0}")]
+    Watch(#[from] notify::Error),
     
     // remove for now to see real panics and not cover them up
     //#[error("internal error: {0}")]

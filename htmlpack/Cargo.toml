@@ -43,6 +43,7 @@ tokio = { version = "1.28", features = ["full"] }
 url = { version = "2.5.4", features = ["serde"] }
 #base94 = "0.3.0"
 notify = "8.2.0"
+notify-debouncer-full = "0.7.0"
 
 [dev-dependencies]
 mockito = "1"
