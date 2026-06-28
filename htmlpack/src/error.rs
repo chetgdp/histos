@@ -28,7 +28,7 @@ pub type HistosResult<T> = std::result::Result<T, HistosError>;
 pub enum HistosError {
     #[error("configuration error: {0}")]
     Config(#[from] ConfigError),
-
+    
     #[error("compilation error: {0}")]
     Compile(#[from] CompileError),
     

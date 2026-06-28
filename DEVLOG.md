@@ -421,8 +421,31 @@ an array that holds the asset strings, then the Asset struct holds their index?
 
 im trying to figure out the shape of the data here. so I would probably need to add some code regarding AssetSource. It has to point to some kind of cached version? Or no, AssetSource is at the config level. 
 
-yaml text -> PackConfig -> htmldoc -> render
+yaml text -> PackConfig -> build -> PackCache -> htmldoc -> render
 
 we need some type of cache zone where the watcher also live like
 
 pathbuf + cache (processed) + watch? 
+
+so we have the path of a local asset via config. we have to watch that somehow. Not sure how to do it entirely. If there is a change we run the build process on that asset and it slots into the `PackCache`. After that we htmldoc and render. 
+
+```rust
+struct CachedAsset<T> {
+    source: AssetSource,
+    processed: T, 
+}
+
+struct PackCache {
+    // no need for metadata config? we shouldnt watch the config
+    favicon:    Vec<usize>,
+    html:       Vec<usize>,
+    css:        Vec<usize>,
+    scripts:    Vec<usize>,
+    wasm:       Vec<usize>,
+}
+
+// HashMap<K:V> where K is usize and V is CachedAsset<T>, String or EncodedWasm or EncodedIcon
+```
+
+wait why do I care about this yet? why not design the piece of code that does the watching and then whenever any file updates we rerun the full pipeline. This is obviously not optimal but it just works.
+

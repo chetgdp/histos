@@ -20,7 +20,7 @@ then encode it in base64
 
 // standard
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 // external
 use clap::{Parser};
 use base64::prelude::*;
@@ -76,14 +76,59 @@ pub async fn run() -> HistosResult<()> {
     eprintln!("Output: {}", cli.output.display());
     println!("WATCH MODE: {}", cli.watch);
 
+    if cli.watch {
+        run_watch_mode(cli).await?;
+    } else {
+        run_default_mode(cli).await?;
+    }
+
+
+    //println!("{}", cli.output.display());
+    Ok(())
+}
+
+async fn run_default_mode(cli: Cli) -> HistosResult<()> {
+    build_once(&cli).await?;
+    Ok(())
+}
+
+async fn run_watch_mode(cli: Cli) -> HistosResult<()> {
+    build_once(&cli).await?;
+
+    println!("WATCH MODE HELLO");
+    let config = load_config(&cli.config).await?;
+    let paths = local_paths(&config);
+        
+    Ok(())
+}
+
+async fn build_once(cli: &Cli) -> HistosResult<()> {
     // oh yeah this feels good
-    load_config(cli.config).await?
+    load_config(&cli.config).await?
         .build().await?
         .render()
-        .save_to_file(cli.output.clone())?;
-
-    println!("{}", cli.output.display());
+        .save_to_file(&cli.output)?;
     Ok(())
+}
+
+fn local_paths(c: &PackConfig) -> Vec<PathBuf> {
+   
+    // process both wasm
+    let wasm: Vec<AssetSource> = c.wasm
+        .iter()
+        .flat_map(|m| [m.binary.clone(), m.glue.clone()])
+        .collect();
+
+    let paths = [&c.favicon, &c.styles, &c.html, &c.scripts, &wasm];
+    
+    // remove the remote resource paths
+    paths.into_iter()
+        .flatten()
+        .filter_map(|s| match s {
+            AssetSource::Local(p) => Some(p.clone()),
+            AssetSource::Remote(_) => None,
+        })
+        .collect()
 }
 
 /// Loads config from given path, serde yaml->config magic
@@ -101,28 +146,28 @@ pub async fn run() -> HistosResult<()> {
 ///
 /// ```no_run
 /// # use histos::packer::load_config;
-/// # use std::path::PathBuf;
+/// # use std::path::Path;
 /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-/// let config = load_config(PathBuf::from("config.yaml")).await?;
+/// let config = load_config(Path::new("config.yaml")).await?;
 /// # Ok(())
 /// # }
 /// ```
 pub async fn load_config(
-    config_path: PathBuf
+    config_path: &Path
 ) -> HistosResult<PackConfig> {
-    let yaml_text = fs::read_to_string(&config_path)
+    let yaml_text = fs::read_to_string(config_path)
         .map_err(|source| match source.kind() {
             // consolidate to FileSystemError
             std::io::ErrorKind::NotFound => ConfigError::FileNotFound { 
-                path: config_path.clone() 
+                path: config_path.to_path_buf()
             },
             _ => ConfigError::ReadFailed { 
-                path: config_path.clone(), source 
+                path: config_path.to_path_buf(), source 
             },
         })?;
     let yaml_root: YamlRoot = serde_yaml::from_str(&yaml_text)
         .map_err(|e| ConfigError::YamlParse {
-            path: config_path.clone(),
+            path: config_path.to_path_buf(),
             source: e,
         })?;
     let config: PackConfig = yaml_root.pack.try_into()?;

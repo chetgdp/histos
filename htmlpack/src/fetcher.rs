@@ -5,7 +5,7 @@
 */
 
 // standard
-use std::path::PathBuf;
+use std::path::{Path};
 // external
 use url::Url;
 // local
@@ -25,20 +25,20 @@ use crate::error::{HistosResult, FetchError};
 ///
 /// ```no_run
 /// # use histos::fetcher::get_local_file;
-/// # use std::path::PathBuf;
+/// # use std::path::Path;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// let bytes = get_local_file(&PathBuf::from("style.css"))?;
+/// let bytes = get_local_file(Path::new("style.css"))?;
 /// # Ok(())
 /// # }
 /// ```
-pub fn get_local_file(path: &PathBuf) -> HistosResult<Vec<u8>> {
+pub fn get_local_file(path: &Path) -> HistosResult<Vec<u8>> {
     std::fs::read(path).map_err(|source| match source.kind() {
         // consolidate to FileSystemError
         std::io::ErrorKind::NotFound => FetchError::LocalNotFound { 
-            path: path.clone() 
+            path: path.to_path_buf()
         }.into(),
         _ => FetchError::LocalRead { 
-            path: path.clone(), source 
+            path: path.to_path_buf(), source 
         }.into(),
     })
 }

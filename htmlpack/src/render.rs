@@ -8,7 +8,7 @@
 use std::fs::File;
 use std::fs;
 use std::io::prelude::*;
-use std::path::PathBuf;
+use std::path::{Path};
 // local
 use crate::error::{HistosResult, SaveError};
 // external
@@ -206,25 +206,31 @@ impl PackedHtml {
     ///
     /// ```no_run
     /// # use histos::render::PackedHtml;
-    /// # use std::path::PathBuf;
+    /// # use std::path::Path;
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// let packed = PackedHtml { html: String::from("<html></html>") };
-    /// packed.save_to_file(PathBuf::from("dist/index.html"))?;
+    /// packed.save_to_file(Path::new("dist/index.html"))?;
     /// # Ok(())
     /// # }
     /// ```
     // save our string to an html file
-    pub fn save_to_file(self, output: PathBuf) -> HistosResult<()> {
+    pub fn save_to_file(self, output: &Path) -> HistosResult<()> {
         let html = self.html;
         // create the directory and all parent directories if they don't exist
         if let Some(parent) = output.parent() {
             fs::create_dir_all(parent)
-                .map_err(|source| SaveError::CreateDir { path: parent.to_path_buf(), source })?;
+                .map_err(|source| SaveError::CreateDir { 
+                    path: parent.to_path_buf(), source 
+                })?;
         }
         let mut file = File::create(&output)
-            .map_err(|source| SaveError::CreateFile { path: output.clone(), source })?;
+            .map_err(|source| SaveError::CreateFile { 
+                path: output.to_path_buf(), source 
+            })?;
         file.write_all(html.as_bytes())
-            .map_err(|source| SaveError::WriteFile { path: output.clone(), source })?;
+            .map_err(|source| SaveError::WriteFile { 
+                path: output.to_path_buf(), source 
+            })?;
 
         Ok(())
     }

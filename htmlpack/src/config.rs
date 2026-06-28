@@ -7,7 +7,7 @@
 */
 
 // standard
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::collections::HashMap;
 // external
 use url::Url;
@@ -278,13 +278,13 @@ fn determine_compression_type(s: String) -> CompressionType {
     }
 }
 
-fn get_pkg_files(pkg_dir: &PathBuf) -> Result<(PathBuf, PathBuf), ConfigError> {
+fn get_pkg_files(pkg_dir: &Path) -> Result<(PathBuf, PathBuf), ConfigError> {
     let file_entries = std::fs::read_dir(pkg_dir)
         .map_err(|source| match source.kind() {
             std::io::ErrorKind::NotFound => ConfigError::PkgDirNotFound { 
-                path: pkg_dir.clone() 
+                path: pkg_dir.to_path_buf() 
             },
-            _ => ConfigError::PkgDirRead { path: pkg_dir.clone(), source },
+            _ => ConfigError::PkgDirRead { path: pkg_dir.to_path_buf(), source },
         })?;
 
     let mut wasm = None;
@@ -295,20 +295,20 @@ fn get_pkg_files(pkg_dir: &PathBuf) -> Result<(PathBuf, PathBuf), ConfigError> {
             let path = entry.path();
             if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
                 if name.ends_with("_bg.wasm") {
-                    wasm = Some(path.clone());
+                    wasm = Some(path.to_path_buf());
                 } else if name.ends_with(".js") {
-                    js = Some(path.clone());
+                    js = Some(path.to_path_buf());
                 }
             }
         }
     }
 
     let wasm = wasm.ok_or_else(|| ConfigError::PkgFileMissing {
-        path: pkg_dir.clone(),
+        path: pkg_dir.to_path_buf(),
         missing: "_bg.wasm",
     })?;
     let js = js.ok_or_else(|| ConfigError::PkgFileMissing {
-        path: pkg_dir.clone(),
+        path: pkg_dir.to_path_buf(),
         missing: ".js",
     })?;
 
@@ -365,7 +365,12 @@ impl PackConfig {
     /// ```
     /// # use histos::config::PackConfig;
     /// let config = PackConfig::new()
-    ///     .set_metadata("My App".into(), "Author".into(), "A description".into(), "rust, wasm".into());
+    ///     .set_metadata(
+    ///         "My App".into(), 
+    ///         "Author".into(), 
+    ///         "A description".into(), 
+    ///         "rust, wasm".into()
+    ///     );
     /// ```
     pub fn set_metadata(
         mut self,
