@@ -48,6 +48,8 @@ fn render_head(head: HtmlHead) -> Markup {
         "\n"
         (render_favicons(head.favicon))
         "\n"
+        (render_apple_icon(head.apple_icon))
+        "\n"
         (render_styles(head.css))
         "\n"
     }
@@ -57,10 +59,10 @@ fn render_metadata(metadata: HtmlMetadata) -> Markup {
     // could only figure out how to make viewport like this with concat?
     // should we let the user customize this?
     let viewport = concat!(
+        //"maximum-scale=1.0, ",
+        //"user-scalable=1"
         "width=device-width, ",
-        "initial-scale=1.0, ",
-        "maximum-scale=1.0, ",
-        "user-scalable=1"
+        "initial-scale=1.0",
     );
     html! {
         "\n"
@@ -90,7 +92,7 @@ fn render_favicons(favicons: Vec<EncodedIcon>) -> Markup {
             "\n"
             link 
                 rel="icon" 
-                type="image/(favicon.mime_type)" 
+                type=(format!("image/{}", favicon.mime_type))
                 href=(format!(
                         "data:image/{};{},{}", 
                         favicon.mime_type,
@@ -98,7 +100,6 @@ fn render_favicons(favicons: Vec<EncodedIcon>) -> Markup {
                         favicon.text
                     ));
             //link rel="icon" type="image/svg+xml" href=(format!("data:image/svg+xml;base64,{}", favicons[0]));
-            "\n"
             // basic, covers most needs
             //link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,YOUR_ICO_BASE64_HERE";
             // fallback pngs for various sizes
@@ -107,6 +108,29 @@ fn render_favicons(favicons: Vec<EncodedIcon>) -> Markup {
             //link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,YOUR_32x32_PNG_BASE64_HERE";
             // apple support
             //link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,YOUR_180x180_PNG_BASE64_HERE";
+        }
+    } else {
+        html! {
+            "\n"
+        }
+    }
+}
+
+fn render_apple_icon(apple_icon: Vec<EncodedIcon>) -> Markup {
+    if apple_icon.len() > 0 {
+        let apple_icon = &apple_icon[0];
+        html! {
+            "\n"
+            // apple touch icon for ios homescreen
+            link 
+                rel="apple-touch-icon" 
+                type=(format!("image/{}", apple_icon.mime_type))
+                href=(format!(
+                        "data:image/{};{},{}", 
+                        apple_icon.mime_type,
+                        apple_icon.encoding,
+                        apple_icon.text
+                    ));
         }
     } else {
         html! {

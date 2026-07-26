@@ -30,6 +30,7 @@ pub struct HtmlHead {
     pub metadata: HtmlMetadata,
     // assets
     pub favicon: Vec<EncodedIcon>,
+    pub apple_icon: Vec<EncodedIcon>,
     pub css: Vec<String>, // flatten the css // unflatten the css
 }
 
@@ -123,7 +124,7 @@ impl HtmlDoc {
     /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::new(
     ///     "My App".into(), "Author".into(), "desc".into(), "kw".into(),
-    ///     vec![], vec![], vec![], vec![], vec![],
+    ///     vec![], vec![], vec![], vec![], vec![], vec![],
     /// );
     /// ```
         pub fn new(
@@ -133,6 +134,7 @@ impl HtmlDoc {
         description: String,
         keywords: String,
         favicon: Vec<EncodedIcon>,
+        apple_icon: Vec<EncodedIcon>,
         css: Vec<String>,
         // body
         encoded_wasm: Vec<EncodedWasm>,
@@ -148,6 +150,7 @@ impl HtmlDoc {
                     keywords,
                 },
                 favicon,
+                apple_icon,
                 css,
             },
             body: HtmlBody {
@@ -191,15 +194,16 @@ impl HtmlDoc {
     // need empty htmldoc
     pub fn empty() -> Self {
         Self::new(
-            "histos".into(),
-            "".into(),
-            "".into(),
-            "".into(),
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
+            "histos".into(),    // title
+            "".into(),          // author
+            "".into(),          // description
+            "".into(),          // keywords
+            vec![],             // favicon
+            vec![],             // apple_icon
+            vec![],             // css
+            vec![],             // encoded_wasm
+            vec![],             // js_scripts
+            vec![],             // html_shards
         )
     }
 
@@ -341,6 +345,23 @@ impl HtmlDoc {
         self.head.favicon.push(favicon);
         self
     } 
+
+    ///
+    /// # Errors
+    ///
+    /// This function is infallible.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use histos::html::{HtmlDoc, EncodedIcon};
+    /// let icon = EncodedIcon::new("png".into(), "base64".into(), "iVBORw0KGgo=".into());
+    /// let doc = HtmlDoc::empty().add_apple_icon(icon);
+    /// ```
+    pub fn add_apple_icon(mut self, apple_icon: EncodedIcon) -> Self {
+        self.head.apple_icon.push(apple_icon);
+        self
+    }
     
     ///
     /// # Errors

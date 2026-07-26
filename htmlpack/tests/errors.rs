@@ -13,7 +13,7 @@ use url::Url;
 
 #[tokio::test]
 async fn config_file_not_found() {
-    let result = packer::load_config(PathBuf::from("/no/such/config.yaml")).await;
+    let result = packer::load_config(&PathBuf::from("/no/such/config.yaml")).await;
     assert!(matches!(
         result,
         Err(HistosError::Config(ConfigError::FileNotFound { .. }))
@@ -25,7 +25,7 @@ async fn config_yaml_parse_error() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("bad.yaml");
     std::fs::write(&path, b": : invalid\n  yaml: [\n").unwrap();
-    let result = packer::load_config(path).await;
+    let result = packer::load_config(&path).await;
     assert!(matches!(
         result,
         Err(HistosError::Config(ConfigError::YamlParse { .. }))
@@ -161,7 +161,7 @@ fn save_create_dir_error() {
     let output = fake_parent.join("output.html");
 
     let packed = PackedHtml { html: "<html/>".into() };
-    let result = packed.save_to_file(output);
+    let result = packed.save_to_file(&output);
     assert!(matches!(
         result,
         Err(HistosError::Save(SaveError::CreateDir { .. }))
@@ -178,7 +178,7 @@ fn save_create_file_error() {
     let output = dir.path().join("output.html");
 
     let packed = PackedHtml { html: "<html/>".into() };
-    let result = packed.save_to_file(output);
+    let result = packed.save_to_file(&output);
 
     // Restore permissions so tempdir cleanup succeeds.
     std::fs::set_permissions(dir.path(), std::fs::Permissions::from_mode(0o755)).unwrap();

@@ -449,3 +449,7 @@ struct PackCache {
 
 wait why do I care about this yet? why not design the piece of code that does the watching and then whenever any file updates we rerun the full pipeline. This is obviously not optimal but it just works.
 
+
+Did a bunch of stuff to change &Path and PathBuf. (lowkey forgot why lol) (I think &Pathbuf is dumb?)
+
+Added apple_icon for iOS homescreen.

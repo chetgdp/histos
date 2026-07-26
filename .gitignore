@@ -33,3 +33,5 @@ public/
 src_cpy/
 htmlpack/src_cpy/
 
+# examples get their own repo
+examples/

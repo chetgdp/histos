@@ -54,6 +54,7 @@ pub struct PackConfig {
     pub runtime:        RuntimeConfig,
     pub metadata:       MetadataConfig,
     pub favicon:        Vec<AssetSource>,
+    pub apple_icon:     Vec<AssetSource>,
     pub styles:         Vec<AssetSource>,
     pub html:           Vec<AssetSource>,
     pub scripts:        Vec<AssetSource>,
@@ -94,6 +95,7 @@ impl Default for PackConfig {
             runtime:        RuntimeConfig::default(),
             metadata:       MetadataConfig::default(),
             favicon:        Vec::new(),
+            apple_icon:     Vec::new(),
             styles:         Vec::new(),
             html:           Vec::new(),
             scripts:        Vec::new(),
@@ -153,6 +155,10 @@ impl TryFrom<YamlPack> for PackConfig {
                             .unwrap_or_default(),
 
             favicon:    yaml.favicon
+                            .map(convert_yaml_assets)
+                            .unwrap_or_default(),
+
+            apple_icon: yaml.apple_icon
                             .map(convert_yaml_assets)
                             .unwrap_or_default(),
 
@@ -273,7 +279,8 @@ fn determine_compression_type(s: String) -> CompressionType {
     match s.as_str() {
         "brotli"    => CompressionType::Brotli,
         "none"      => CompressionType::None,
-        // set none here leads to default
+        // set none here leads to default, idk if it should be Brotli or None
+        //_           => CompressionType::Brolti,    
         _           => CompressionType::None,    
     }
 }

@@ -27,6 +27,7 @@ pub struct YamlPack {
     pub runtime:        Option<YamlRuntime>,
     pub metadata:       Option<YamlMetadata>,
     pub favicon:        Option<Vec<String>>,      //Option<YamlAssets>,
+    pub apple_icon:     Option<Vec<String>>,
     pub css:            Option<Vec<String>>,      //Option<YamlAssets>,
     pub html:           Option<Vec<String>>,      //Option<YamlAssets>,
     pub scripts:        Option<Vec<String>>,      //Option<YamlAssets>,
@@ -85,7 +86,7 @@ pub struct Cli {
     pub output: PathBuf,
 
     /// watch mode, hot reload
-    #[arg(short, long, default_value = "true")]
+    #[arg(short, long, default_value = "false")]
     pub watch: bool,
 }
 

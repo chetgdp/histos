@@ -51,6 +51,7 @@ const RUNTIME_DECODER_JS: &str = include_str!("../core/wasm_decoder.js");
 const RUNTIME_DECODER_WASM: &[u8] = include_bytes!("../core/wasm_decoder_bg.wasm");
 const DEFAULT_DECODER_ID: &str = "bin-wasm-decoder";
 const DEFAULT_ICON_MIME_TYPE: &str = "svg+xml";
+const DEFAULT_APPLE_ICON_MIME_TYPE: &str = "png";
 const DEFAULT_ICON_ENCODING: &str = "base64";
 
 // read yaml from file
@@ -146,7 +147,14 @@ fn local_paths(c: &PackConfig) -> Vec<PathBuf> {
         .flat_map(|m| [m.binary.clone(), m.glue.clone()])
         .collect();
 
-    let paths = [&c.favicon, &c.styles, &c.html, &c.scripts, &wasm];
+    let paths = [
+        &c.favicon, 
+        &c.apple_icon, 
+        &c.styles, 
+        &c.html, 
+        &c.scripts, 
+        &wasm
+    ];
     
     // remove the remote resource paths
     paths.into_iter()
@@ -298,6 +306,7 @@ impl PackConfig {
             .collect();
 
         let favicon_bytes = fetcher::fetch_all_sources(self.favicon).await?;
+        let apple_icon_bytes = fetcher::fetch_all_sources(self.apple_icon).await?;
         let style_bytes = fetcher::fetch_all_sources(self.styles).await?;
         let mut script_bytes = fetcher::fetch_all_sources(self.scripts).await?;
         let html_bytes = fetcher::fetch_all_sources(self.html).await?;
@@ -308,6 +317,7 @@ impl PackConfig {
 
         // OPERATION 3: PROCESS
         let favicons = process_icons(favicon_bytes)?;
+        let apple_icons = process_apple_icons(apple_icon_bytes)?;
         //let styles = process_styles(style_bytes)?;
         // unflatten, I think this works.
         let styles = process_text(style_bytes)?;
@@ -318,6 +328,7 @@ impl PackConfig {
         // OPERATION 4: RUNTIME
         // need to enable mutability before injecting runtime
         let mut favicons = favicons;
+        //let apple_icons = apple_icons;
         let mut scripts = scripts;
         if self.runtime.enabled {
             default_runtime(
@@ -339,6 +350,7 @@ impl PackConfig {
             self.metadata.keywords,
             // assets
             favicons,
+            apple_icons,
             styles,
             // body
             encoded_wasm,
@@ -362,6 +374,21 @@ fn process_icons(bytes: Vec<Vec<u8>>) -> HistosResult<Vec<EncodedIcon>> {
             let text = encoder::base64_encode(&b);
             Ok(EncodedIcon {
                 mime_type:  DEFAULT_ICON_MIME_TYPE.to_string(),
+                encoding:   DEFAULT_ICON_ENCODING.to_string(),
+                text
+            })
+        })
+        .collect()
+}
+
+// ok we can consolidate these two
+fn process_apple_icons(bytes: Vec<Vec<u8>>) -> HistosResult<Vec<EncodedIcon>> {
+    bytes
+        .into_iter()
+        .map(|b| {
+            let text = encoder::base64_encode(&b);
+            Ok(EncodedIcon {
+                mime_type:  DEFAULT_APPLE_ICON_MIME_TYPE.to_string(),
                 encoding:   DEFAULT_ICON_ENCODING.to_string(),
                 text
             })
