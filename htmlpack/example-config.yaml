@@ -1,26 +1,32 @@
-# this is an example config
 pack:
-  # this option enables the core runtime environment that i have built
-  # core.js and wasm_decoder for brotli decode of wasm_modules
+  # core.js loads the WASM module; decoder unpacks brotli-compressed binaries
   runtime:
     enabled: true
-    icon: false
+    icon: true
     core: true
     decoder: true
+
   metadata:
-    title: "histos"
-    author: "me"
-    description: "packed by histos"
-    keywords: "hello from the yaml file"
+    title: "My App"
+    author: "Your Name"
+    description: "Packed by histos"
+    keywords: "wasm, rust, offline"
+
   favicon:
-    - ./core/icon.svg
+    - ./assets/icon.svg
+
   css:
-    - "https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    - https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css
+    - ./styles/app.css
+
+  scripts:
+    - ./src/init.js
+
   wasm:
-    module:
-      compile_wasm: false
-      binary: "../wasm_modules/pkg/wasm_modules_bg.wasm"
-      glue: "../wasm_modules/pkg/wasm_modules.js"
-      # id must be "bin-wasm-app" for the default core.js runtime to load it
+    app:
+      # parent of pkg/; run `wasm-pack build --target no-modules` there first
+      path: ./my-wasm-project
+      # must be "bin-wasm-app" for the default runtime
       id: "bin-wasm-app"
+      compile_wasm: false
       compression: "brotli"

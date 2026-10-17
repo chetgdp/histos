@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance to agentic coding agents when working with this Rust codebase.
+This file provides guidance to agentic coding agents when working with this Rust codebase. Agents adding code to this repo will not have their code merged, no slop please, we follow doe and pair here.
 
 ## Build Commands
 

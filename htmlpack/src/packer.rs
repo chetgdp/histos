@@ -23,7 +23,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 // external
-use clap::{Parser};
+use clap::Parser;
 use base64::prelude::*;
 use crate::config::{
     AssetSource, 
@@ -36,12 +36,13 @@ use crate::config::{
 use notify::RecursiveMode;
 use notify_debouncer_full::{new_debouncer, DebounceEventResult};
 // local
-use crate::cli::{YamlRoot, Cli};
+use crate::cli::{YamlRoot, Cli, Command};
 use crate::encoder;
 use crate::error::{HistosResult, ConfigError, EncodeError};
 use crate::wasmbuilder;
 use crate::html::{HtmlDoc, EncodedWasm, EncodedIcon};
 use crate::fetcher;
+
 
 
 // runtime assets on default
@@ -53,6 +54,7 @@ const DEFAULT_DECODER_ID: &str = "bin-wasm-decoder";
 const DEFAULT_ICON_MIME_TYPE: &str = "svg+xml";
 const DEFAULT_APPLE_ICON_MIME_TYPE: &str = "png";
 const DEFAULT_ICON_ENCODING: &str = "base64";
+const AGENT_GUIDE: &str = include_str!("../rtfm.md");
 
 // read yaml from file
 // set config from yaml
@@ -73,9 +75,21 @@ const DEFAULT_ICON_ENCODING: &str = "base64";
 /// # Ok(())
 /// # }
 /// ```
+// not liking the early returns here but....
 pub async fn run() -> HistosResult<()> {
     // parse CLI
     let cli = Cli::parse();
+
+    // run subcommands
+    match cli.command {
+        Some(Command::Rtfm | Command::Guide) => {
+            print!("{}", AGENT_GUIDE);
+            return Ok(());
+        }  
+        None => {}
+    }
+    
+    // this needs to be changed "debug"
     eprintln!("Config: {}", cli.config.display());
     eprintln!("Output: {}", cli.output.display());
     println!("WATCH MODE: {}", cli.watch);
@@ -85,7 +99,6 @@ pub async fn run() -> HistosResult<()> {
     } else {
         run_default_mode(cli).await?;
     }
-
 
     //println!("{}", cli.output.display());
     Ok(())

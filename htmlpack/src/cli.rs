@@ -10,7 +10,7 @@
 use std::path::PathBuf;
 use std::collections::HashMap;
 // external
-use clap::{Parser};
+use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 // local
 // none
@@ -73,12 +73,24 @@ pub struct YamlWasmModule {
 
 // clap ---------------------------------------------------------------------- /
 
+#[derive(Subcommand)]
+pub enum Command {
+    /// guide, for agents or humans to read
+    Rtfm,
+    Guide,
+    // others?
+}
+
 // this is the name of the main command
 #[derive(Parser)]
 #[command(name = "histos")]
 #[command(about = "Weave web assets into a single HTML file")]
 pub struct Cli {
+    #[command(subcommand)]
+    pub command: Option<Command>,
+
     /// path to the YAML configuration file
+    #[arg(default_value = "./histos.yaml")]
     pub config: PathBuf,
     
     /// output file path with default

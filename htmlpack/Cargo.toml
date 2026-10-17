@@ -1,6 +1,6 @@
 [package]
 name = "histos"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 description = "A tool to weave web assets into a single, atomic HTML file."
 license = "MIT OR Apache-2.0"
@@ -12,6 +12,7 @@ include = [
     "core/**/*",
     "Cargo.toml",
     "CRATES-IO.md",
+    "rtfm.md",
     "LICENSE-MIT",
     "LICENSE-APACHE",
 ]

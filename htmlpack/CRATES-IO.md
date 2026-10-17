@@ -1,29 +1,21 @@
 # histos
 
-Pack any web app WASM(Rust/C), HTML, CSS, JS,  into a single self-contained `.html` file.
+Histos packs a web app into one `index.html` file. The file contains the WASM, CSS, JS, and HTML. The output is plain HTML. Put it on any static web server, send it as a file, or open it from `file://`.
 
-No server. No CDN. No internet required at runtime. Open directly in a browser.
+Histos has first-class support for Rust via `wasm-pack`.
 
-First class wasm-pack support for **Rust** and `SINGLE_FILE=1` for **Emscripten/C**.
-
-## [repo](https://github.com/?/histos)
-
----
+Repo: <https://github.com/chetgdp/histos>
 
 ## How it works
 
-histos reads a YAML config describing your web assets and weaves together one portable `index.html`:
+Histos reads a YAML config and weaves the listed assets into one file:
 
-- WASM binaries are brotli-compressed, base64-encoded, and stored in `<pre>` tags
-- A bundled runtime decoder unpacks the WASM at load time
-- Decoded WASM is cached in IndexedDB — subsequent loads are instant
-- CSS files are fetched and inlined as a single `<style>` block
-- JS and HTML fragments are inlined verbatim
-- Favicons are base64-encoded SVGs
+- WASM: histos compresses it with brotli, encodes it as base64, and puts it in a `<pre>` tag. A bundled runtime decodes it at load time and caches it in IndexedDB.
+- CSS: histos joins all files into one `<style>` tag.
+- JS and HTML fragments: histos inlines them as-is.
+- Favicon: histos encodes the SVG as base64.
 
-The result is a fully offline, browser-runnable application in one file.
-
----
+Histos inlines each asset it packs, including URL assets, at build time.
 
 ## Install
 
@@ -31,33 +23,31 @@ The result is a fully offline, browser-runnable application in one file.
 cargo install histos
 ```
 
-To compile WASM from source during packing, also install `wasm-pack`:
+You need `wasm-pack` only when you set `compile_wasm: true`:
 
 ```bash
 cargo install wasm-pack
 ```
 
----
-
 ## Quick start
 
 ```yaml
-# config.yaml
+# histos.yaml
 pack:
+  runtime:
+    enabled: false
   metadata:
     title: "My App"
   css:
     - ./styles/main.css
-  runtime:
-    enabled: false
 ```
 
 ```bash
-histos config.yaml
-histos config.yaml --output ./dist/index.html
+histos                                  # reads ./histos.yaml, writes ./index.html
+histos config.yaml -o ./dist/index.html # explicit paths
+histos -w                               # rebuild when a local asset changes
+histos rtfm                             # print the full manual
 ```
-
----
 
 ## WASM app example
 
@@ -66,69 +56,63 @@ pack:
   metadata:
     title: "My WASM App"
     author: "Jane Doe"
-    description: "A Rust/WASM app packed by histos"
-
   favicon:
     - ./assets/icon.svg
-
   css:
     - https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css
     - ./styles/app.css
-
   wasm:
     app:
-      path: ./my-wasm-project        # parent of pkg/
-      id: "bin-wasm-app"             # must match default runtime expectation
-      compile_wasm: false            # set true to run wasm-pack automatically
+      path: ./my-wasm-project   # parent of pkg/
+      id: "bin-wasm-app"        # the default runtime looks up this id
+      compile_wasm: false       # true runs wasm-pack for you
       compression: "brotli"
 ```
-
----
 
 ## Config reference
 
 | Key | Description |
 |-----|-------------|
-| `pack.runtime` | Controls which runtime components are injected (decoder, loader, icon) |
-| `pack.metadata` | HTML `<head>` metadata: title, author, description, keywords |
-| `pack.favicon` | List of SVG paths or URLs — base64-encoded into `<link rel="icon">` |
-| `pack.css` | List of CSS paths or URLs — concatenated into a single `<style>` block |
-| `pack.html` | List of HTML fragment paths or URLs — inlined into the body |
-| `pack.scripts` | List of JS paths or URLs — inlined inside `<script>` tags |
+| `pack.runtime` | Which runtime parts histos injects: loader, decoder, loading icon |
+| `pack.metadata` | `<head>` metadata: title, author, description, keywords |
+| `pack.favicon` | SVG paths or URLs. Histos uses the first as `<link rel="icon">` |
+| `pack.apple_icon` | PNG paths or URLs. Histos uses the first as `<link rel="apple-touch-icon">` |
+| `pack.css` | CSS paths or URLs. Joined into one `<style>` block |
+| `pack.html` | HTML fragment paths or URLs. Inlined into the body |
+| `pack.scripts` | JS paths or URLs. Inlined in `<script>` tags |
 | `pack.wasm.<name>` | WASM module: `path`, `binary`, `glue`, `id`, `compile_wasm`, `compression` |
 
-Full schema with examples: [`llms.txt`](https://github.com/ironhands/histos/blob/main/llms.txt)
+Full schema, workflow, and problem table: run `histos rtfm`, or read [rtfm.md](https://github.com/chetgdp/histos/blob/main/htmlpack/rtfm.md).
 
----
+## Common problems
 
-## Common pitfalls
-
-- **`id` must be `"bin-wasm-app"`** when using the default runtime — `core.js` looks for this exact ID
-- **`compression: "brotli"` requires `runtime.decoder: true`** (the default) — or the WASM can't be decoded
-- **`metadata:` not `meta:`** — the YAML key is `metadata`
-- **Paths are relative to CWD** where `histos` is invoked, not the config file location
-
----
+- Set `id` to `"bin-wasm-app"` when you use the default runtime. `core.js` looks up this exact id.
+- Keep `runtime.decoder: true` (the default) when `compression: "brotli"`. Without it the WASM cannot decode.
+- The YAML key is `metadata:`, not `meta:`.
+- Local paths are relative to the directory where you run histos, not to the config file.
 
 ## Library API
 
-histos is also usable as a library crate for programmatic HTML packing:
+Histos is also a library crate.
 
 ```rust
-use histos::{PackConfig, HistosResult};
+use std::path::Path;
+use histos::{PackConfig, HistosResult, render_to_packed};
 
 #[tokio::main]
 async fn main() -> HistosResult<()> {
-    let mut config = PackConfig::new();
-    config.set_metadata("My App", "Jane Doe", "An offline WASM app", "");
-    config.add_style("https://example.com/style.css");
+    let config = PackConfig::new()
+        .set_metadata("My App".into(), "Jane Doe".into(), "An offline WASM app".into(), "".into())
+        .add_style("https://example.com/style.css".into());
 
-    let packed = config.build().await?;
-    packed.save_to_file("index.html").await?;
+    let doc = config.build().await?;
+    render_to_packed(doc).save_to_file(Path::new("index.html"))?;
     Ok(())
 }
 ```
 
----
+`histos::load_config(path)` reads a YAML file into a `PackConfig`.
 
-License: MIT
+## License
+
+MIT OR Apache-2.0

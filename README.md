@@ -18,25 +18,27 @@ first class wasm-pack support for **Rust** and `SINGLE_FILE=1` for **Emscripten/
 - [nousbase](https://chetgdp.github.io/notes) *rust markdown ssg*
 - [pokepack](https://afnleaf.github.io/pokepack) *bitpacking format*
 - [a 2d game](https://afnleaf.github.io/mecha) *raylib*
+- [MCXWord](https://chetgdp.github.io/crossword) *js*
+- [DOOM.html](https://chetgdp.github.io/doom) *C+js*
 
 ## examples
 for v0.0.2
-- [] hello world examples of code
+- hello world examples of code
 - Rust
     - basic
     - [blogpost](https://chetgdp.github.io/notes#/TECH/README.md)
-    - [paleomap 3d - bevy]
+    - [paleomap 3d: bevy](https://chetgdp.github.io/planet)
 - C
     - basic
     - [game](https://afnleaf.github.io/mecha)
 - Vanilla 
     - three.js
-        - [pixel.ai](https://afnleaf.github.io/pixel.ai) 
-        - [three.wasm demo]()
+        - [pixel.ai](https://chetgdp.github.io/pixel.ai) 
+    - [Minecraft Crossword](https://chetgdp.github.io/crossword)
     - calculator
 
-### [config reference](llms.txt)
-### [SKILL.md](SKILL.md)
+### [RTFM](htmlpack/rtfm.md)
+`histos rtfm` prints the same manual.
 ### [DEVLOG](DEVLOG.md)
 
 ## resources
@@ -90,7 +92,7 @@ Paleomap3d is the main demo for this project. Ensuring Bevy ECS with WebGL and W
 - [x] LLM integration and tool calling
 - [x] verbose description of what is happening
 - [x] basic documentation
-- [] license (who is releasing this software?)
+- [1/2] license (MIT + Apache-2.0 shipped, not final)
 - **v0.1.0 gap**
 - [ ] proper errors and propagation
 - [ ] working examples
@@ -105,6 +107,7 @@ Paleomap3d is the main demo for this project. Ensuring Bevy ECS with WebGL and W
 - [ ] output allowed to overwrite input files with no warning 
 - [ ] backwards compatability with browsers
 - [ ] documentation on ordering of how the html is woven together
+- [ ] threaded mode atomics unstable wasm can we add the headers
 
 ### nice to have
 - [ ] support multiple favicon types
