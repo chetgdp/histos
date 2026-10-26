@@ -82,7 +82,10 @@ pub enum ConfigError {
         path: PathBuf,
         #[source]
         source: std::io::Error,
-    }
+    },
+
+    #[error("wasm module \"{id}\" uses brotli compression but runtime.decoder is false")]
+    DecoderRequired { id: String },
 }
 
 #[derive(Error, Debug)]

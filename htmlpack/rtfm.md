@@ -105,7 +105,7 @@ scripts:
 
 `favicon` must be SVG. Histos writes it as `<link rel="icon" type="image/svg+xml">`. `apple_icon` must be PNG. Histos writes it as `<link rel="apple-touch-icon" type="image/png">`. Both use base64 data URLs. Histos ignores extra entries in both lists.
 
-The body order is fixed: WASM `<pre>` blocks, then `scripts`, then `html` fragments. Scripts run before the fragment elements exist. Wrap DOM access in `DOMContentLoaded`, or put the element setup in a `<script>` inside the fragment.
+The body order is fixed: `html` fragments, then `scripts`, then WASM `<pre>` blocks. Scripts can use the fragment elements directly. They do not need to wait for `DOMContentLoaded`.
 
 ### `pack.wasm.<name>`
 
@@ -173,7 +173,8 @@ pack:
 | Problem | Fix |
 |---------|-----|
 | WASM does not load | Set `id` to `"bin-wasm-app"` when `runtime.core` is `true`. |
-| Brotli decoder missing | Keep `runtime.decoder: true` when `compression: "brotli"`. Or set `compression: "none"`. |
+| `wasm module "<id>" uses brotli compression but runtime.decoder is false` | Set `runtime.decoder: true` or omit it. Or set `compression: "none"` on that module. |
+| `warning: invalid compression type "<value>" detected, defaulting to "none"` | Set `compression` to `"brotli"` or `"none"`. Histos packs the module uncompressed until you fix the value. |
 | `wasm-pack` not found | Run `cargo install wasm-pack`. Or set `compile_wasm: false` and use a pre-built `pkg/`. |
 | `pkg directory not found: <path>` | Run `wasm-pack build --target no-modules` in the WASM project first. |
 | `missing required file in pkg: _bg.wasm` or `.js` | `pkg/` exists but is incomplete. Rebuild with `wasm-pack`. Or set `binary` and `glue` to the files directly. |
@@ -184,4 +185,3 @@ pack:
 | Wrong binary name | The installed binary is `histos`. |
 | Config not found with no args | The default config path is `./histos.yaml`. Pass the path if it differs. |
 | Favicon does not show | Histos uses the first `favicon` entry only. It must be SVG. `.ico` and PNG are not supported. |
-| Script sees `null` elements | Scripts run before `html` fragments. Wait for `DOMContentLoaded`, or move the DOM setup into the fragment's own `<script>`. |

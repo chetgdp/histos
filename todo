@@ -2,9 +2,10 @@
 - [] custom head metadata? lang=en
 - [] proper errors and propagation
 - [] finish docs for what is missing?
-- [] fix llms.txt and AGENTS.md to teach LLMs better (unslop)
 - [] add .ico support for favicon 
-- [] emscripten default loader
+- [] emscripten default loader, glue attr like compression?, readme still says emscripten works (it does with SINGLE_FILE)
+- [] rtfm runtime + wasm sections (after emscripten)
+- [x] fix llms.txt and AGENTS.md to teach LLMs better (unslop)
 - [x] agents read a file ex: https://agents.actual.inc/ , https://bend-lang.com/#get
 - [] working examples (examples get own repo)
     - Rust
@@ -17,6 +18,89 @@
 - [1/2] watch mode (hot reload)
 - [] build cache
 - [] initialize as 0, base config is a passable case, histos always outputs an html file and its own output with warnings about. how does this affect people who use the tool? how do they parse the errors and continue?
+
+## roadmap
+
+### priority (v0.1.0 gap)
+- [] signing for security
+- [] check signing
+- [] base122 (in rust)
+- [] mini http server variation
+- [] reproducible builds/deterministic output
+- [] json manifest block
+- [] output allowed to overwrite input files with no warning
+- [] backwards compatability with browsers
+- [] threaded mode atomics unstable wasm can we add the headers
+- [1/2] license (MIT + Apache-2.0 shipped, not final)
+- [x] documentation on ordering of how the html is woven together
+- [x] more ergonomic default runtime
+- [x] basic errors and propagation
+- [x] library api
+- [x] test suite
+- [x] LLM integration and tool calling
+- [x] verbose description of what is happening
+- [x] basic documentation
+
+### nice to have
+- [] support multiple favicon types
+- [] lazy loading
+- [] wasm advanced
+- [] advanced cli options
+- [] auto webgpu turn on -> webgl2 fallback (storage buffer = bad)
+- [] error on webgpu not found
+- [] single wasm-binary self loading
+- [] output profiles
+- [] template html?
+- [] simple asset loader for textures
+- [] asset loader for models
+- [] basis universal
+- [] encode fonts
+- [] big png
+- [] new animation
+- [] basic game
+
+## implemented
+With these current implemented features, we have a solid backbone.
+- [x] base64 encoding
+- [x] brotli compression
+- [x] wasm simple
+- [x] wasm-bindgen
+- [x] wasm canvas
+- [x] favicon svg
+- [x] custom html
+- [x] css
+- [x] text
+- [x] png
+- [x] metadata
+- [x] default runtime
+- [x] loading screen
+- [x] indexedDB during first time load, cache wasm_modules as u8
+- [x] basic cli tool
+- [x] single wasm_modules path
+
+## todo 2026-09/10
+- [x] move rtfm.md into htmlpack so cargo publish works
+- [x] rewrite rtfm, problems table from error.rs
+- [x] fix CRATES-IO.md
+- [x] export AssetSource and load_config
+- [x] compression attr on the wasm pre, core.js reads it
+- [x] only load decoder if app is brotli (none works now)
+- [x] error on brotli + decoder false
+- [x] body order html -> js -> wasm
+- [x] compression default lives in one place (WasmModule::default)
+- [x] warn on invalid compression, default to none
+- [x] rtfm row for DecoderRequired
+- [x] errors print the message, not Debug, with caused by chain
+
+### paleomap3d specific
+Paleomap3d is the main demo for this project. Ensuring Bevy ECS with WebGL and WebGPU render backends is able to work.
+- [x] wasm bevy engine
+- [x] webgl
+- [x] webgpu
+- [x] encode textures
+- [x] encode models/meshes/3d
+- [x] fps counter
+- [x] instanced mesh custom render shader pipeline
 
 ## todo 2026-01/02
 - [x] simple errors and propagation

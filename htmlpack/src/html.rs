@@ -11,6 +11,7 @@
 // none
 // local
 use crate::render::{PackedHtml, render_to_packed};
+use crate::config::{CompressionType};
 
 //<!-- For older browsers that don't support WASM natively -->
 //<script src="https://cdn.jsdelivr.net/npm/wasm-polyfill/wasm-polyfill.min.js"></script>
@@ -56,6 +57,7 @@ pub struct HtmlBody {
 #[derive(Debug, Clone)]
 pub struct EncodedWasm {
     pub id: String, // identifier
+    pub compression: CompressionType,
     pub hash: String, //sha-256 hash of the text as bytes
     pub text: String, // text content
 }
@@ -70,11 +72,23 @@ impl EncodedWasm {
     ///
     /// ```
     /// # use histos::html::EncodedWasm;
-    /// let wasm = EncodedWasm::new("bin-wasm-app".into(), "abc123".into(), "AGFzbQ==".into());
+    /// # use histos::CompressionType;
+    /// let wasm = EncodedWasm::new(
+    ///     "bin-wasm-app".into(),
+    ///     CompressionType::None,
+    ///     "abc123".into(),
+    ///     "AGFzbQ==".into(),
+    /// );
     /// ```
-    pub fn new(id: String, hash: String, text: String) -> Self {
+    pub fn new(
+        id: String,
+        compression: CompressionType,
+        hash: String,
+        text: String
+    ) -> Self {
         Self {
             id,
+            compression,
             hash,
             text,
         }
@@ -137,9 +151,9 @@ impl HtmlDoc {
         apple_icon: Vec<EncodedIcon>,
         css: Vec<String>,
         // body
-        encoded_wasm: Vec<EncodedWasm>,
-        js_scripts: Vec<String>,
         html_shards: Vec<String>,
+        js_scripts: Vec<String>,
+        encoded_wasm: Vec<EncodedWasm>,
     ) -> Self { 
         Self {
             head: HtmlHead {
@@ -154,9 +168,9 @@ impl HtmlDoc {
                 css,
             },
             body: HtmlBody {
-                encoded_wasm,
+                html_shards,
                 js_scripts,
-                html_shards
+                encoded_wasm,
             },
         }
     }
@@ -372,7 +386,13 @@ impl HtmlDoc {
     ///
     /// ```
     /// # use histos::html::{HtmlDoc, EncodedWasm};
-    /// let wasm = EncodedWasm::new("bin-wasm-app".into(), "abc123".into(), "AGFzbQ==".into());
+    /// # use histos::CompressionType;
+    /// let wasm = EncodedWasm::new(
+    ///     "bin-wasm-app".into(),
+    ///     CompressionType::None,
+    ///     "abc123".into(),
+    ///     "AGFzbQ==".into(),
+    /// );
     /// let doc = HtmlDoc::empty().add_wasm(wasm);
     /// ```
     pub fn add_wasm(mut self, wasm: EncodedWasm) -> Self {

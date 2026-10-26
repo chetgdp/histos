@@ -1,7 +1,9 @@
 # TASK.md
 
+llm sloppa
+
 This file describes the current work. It is not a todo list. `todo` is the
-short-term list. `README.md` is the long-term roadmap. This file gives the
+only checklist: open work, roadmap, and done items. This file gives the
 next session the context it needs.
 
 Working mode: human-led pair programming under Data-Oriented Engineering
@@ -94,8 +96,6 @@ Done this session:
 Still stale:
 
 - `README.md:14` Emscripten claim.
-- `README.md:101` lists watch mode as open. `-w` ships. `todo:17` says
-  `[1/2]`.
 - `htmlpack/rtfm.md` sections `pack.runtime` and `pack.wasm.<name>`. Wait
   for the loader decision. Then rewrite them.
 

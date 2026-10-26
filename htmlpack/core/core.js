@@ -84,7 +84,10 @@ async function runCore() {
             updateStatus("Initializing...");
             
             const db = await openDb(updateStatus);
-            await loadDecoder(db, updateStatus);
+            const app = document.getElementById('bin-wasm-app');
+            if (app?.getAttribute('compression') === 'brotli') {
+                await loadDecoder(db, updateStatus);
+            }
             await loadApp(db, updateStatus);
             
             console.log("WASM module initialized successfully!");
@@ -104,7 +107,6 @@ async function runCore() {
                 elementId: 'bin-wasm-decoder',
                 cachePrefix: 'wasm-decoder',
                 name: 'decoder module',
-                shouldDecompress: false,
                 initFunction: wasm_decoder
             },
             statusCallback
@@ -118,7 +120,6 @@ async function runCore() {
                 elementId: 'bin-wasm-app',
                 cachePrefix: 'wasm-app',
                 name: 'main application',
-                shouldDecompress: true,
                 initFunction: wasm_bindgen
             },
             statusCallback
@@ -190,13 +191,14 @@ async function runCore() {
         // get from dom
         const element = document.getElementById(config.elementId);
         const hash = element.getAttribute('hash');
+        const shouldDecompress = element.getAttribute('compression') === 'brotli';
 
         // if no hash, get from inner
         // if yes hash, check if cached
         if (!hash) {
             const data = element.innerHTML.trim();
             wasmBytes = await decodeBinary(
-                data, config.shouldDecompress, statusCallback);
+                data, shouldDecompress, statusCallback);
         } else {
             console.log(hash);
             const cacheKey = `${config.cachePrefix}-${hash}`;
@@ -204,7 +206,7 @@ async function runCore() {
             if (!wasmBytes) {
                 const data = element.innerHTML.trim();
                 wasmBytes = await decodeBinary(
-                    data, config.shouldDecompress, statusCallback);
+                    data, shouldDecompress, statusCallback);
                 statusCallback?.("Caching module...");
                 await saveAssetToCache(db, cacheKey, wasmBytes);
             }

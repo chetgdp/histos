@@ -266,6 +266,7 @@ fn default_runtime(
             BASE64_STANDARD.encode(RUNTIME_DECODER_WASM);
         let decoder_module = EncodedWasm {
             id: DEFAULT_DECODER_ID.to_string(),
+            compression: CompressionType::None,
             hash: wasm_hash_string,
             text: wasm_encoded_text,
         };
@@ -300,6 +301,18 @@ impl PackConfig {
     /// # }
     /// ```
     pub async fn build(self) -> HistosResult<HtmlDoc> {
+        // OPERATION 0: VALIDATE CONFIG
+        let rt = &self.runtime;
+        if rt.enabled && rt.core && !rt.decoder {
+            if let Some(m) = self.wasm.iter()
+                .find(|m| matches!(m.compression, CompressionType::Brotli))
+            {
+                return Err(
+                    ConfigError::DecoderRequired { id: m.id.clone() }.into()
+                );
+            }
+        }
+
         // OPERATION 1: COMPILE
         // make sure to compile our wasm binaries and js glue first
         if !self.wasm.is_empty() {
@@ -366,9 +379,9 @@ impl PackConfig {
             apple_icons,
             styles,
             // body
-            encoded_wasm,
-            scripts,
             html_shards,
+            scripts,
+            encoded_wasm,
         );
 
         Ok(htmldoc)
@@ -453,6 +466,7 @@ fn process_wasm(
             let encoded_wasm = 
             EncodedWasm::new(
                 m.id.clone(),
+                m.compression.clone(),
                 hash_string,
                 text,
             );

@@ -37,13 +37,35 @@ impl Default for AssetSource {
     }
 }
 
-//#[derive(Default, Debug, Deserialize, Serialize)]
+//#[derive(Debug, Deserialize, Serialize)]
 //#[serde(rename_all = "lowercase")]
-#[derive(Default, Debug)]
+#[derive(Debug, Clone)]
 pub enum CompressionType {
-    #[default]
     Brotli,
     None,
+}
+
+impl CompressionType {
+    /// Returns the name used in YAML config and in the `compression` attribute of the
+    /// packed `<pre>` element.
+    ///
+    /// # Errors
+    ///
+    /// This function is infallible.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use histos::CompressionType;
+    /// assert_eq!(CompressionType::Brotli.as_str(), "brotli");
+    /// assert_eq!(CompressionType::None.as_str(), "none");
+    /// ```
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            CompressionType::Brotli => "brotli",
+            CompressionType::None => "none",
+        }
+    }
 }
 
 // were on team "Big Struct"
@@ -253,7 +275,7 @@ impl TryFrom<YamlWasmModule> for WasmModule {
             compile_wasm: yaml.compile_wasm.unwrap_or(defaults.compile_wasm),
             compression: yaml.compression
                 .map(determine_compression_type)
-                .unwrap_or_default(),
+                .unwrap_or(defaults.compression),
         })
     }
 }
@@ -279,9 +301,10 @@ fn determine_compression_type(s: String) -> CompressionType {
     match s.as_str() {
         "brotli"    => CompressionType::Brotli,
         "none"      => CompressionType::None,
-        // set none here leads to default, idk if it should be Brotli or None
-        //_           => CompressionType::Brolti,    
-        _           => CompressionType::None,    
+        other       => {
+            eprintln!("warning: invalid compression type \"{other}\" detected, defaulting to \"none\"");
+            CompressionType::None
+        }
     }
 }
 

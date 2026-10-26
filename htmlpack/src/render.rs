@@ -152,11 +152,11 @@ fn render_styles(css: Vec<String>) -> Markup {
 fn render_body(body: HtmlBody) -> Markup {
     html! {
         "\n"
-        (render_encoded_wasm(body.encoded_wasm))
+        (render_html_shards(body.html_shards))
         "\n"
         (render_js_scripts(body.js_scripts))
         "\n"
-        (render_html_shards(body.html_shards))
+        (render_encoded_wasm(body.encoded_wasm))
         "\n"
     }
 
@@ -180,7 +180,7 @@ fn render_encoded_wasm(encoded_wasm: Vec<EncodedWasm>) -> Markup {
     html! {
         @for bin in &encoded_wasm {
             "\n"
-            pre id=(bin.id) hash=(bin.hash) style="display: none;" {
+            pre id=(bin.id) hash=(bin.hash) compression=(bin.compression.as_str()) style="display: none;" {
                 (bin.text)
             }
             "\n"
