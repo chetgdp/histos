@@ -42,7 +42,25 @@ pub fn render_to_packed(doc: HtmlDoc) -> PackedHtml {
 }
 
 fn render_head(head: HtmlHead) -> Markup {
+
     html! {
+        //"<!-- metadata -->"
+        "\n"
+        meta charset = "utf-8";
+        @if head.head_shard.is_empty() {
+            // could only figure out how to make viewport like this with concat?
+            // should we let the user customize this?
+            @let viewport = concat!(
+                //"maximum-scale=1.0, ",
+                //"user-scalable=1"
+                "width=device-width, ",
+                "initial-scale=1.0",
+            );
+            "\n"
+            meta name = "viewport" content = (viewport);
+        } @else {
+          (PreEscaped(head.head_shard))
+        }
         "\n"
         (render_metadata(head.metadata))
         "\n"
@@ -56,20 +74,7 @@ fn render_head(head: HtmlHead) -> Markup {
 }
 
 fn render_metadata(metadata: HtmlMetadata) -> Markup {
-    // could only figure out how to make viewport like this with concat?
-    // should we let the user customize this?
-    let viewport = concat!(
-        //"maximum-scale=1.0, ",
-        //"user-scalable=1"
-        "width=device-width, ",
-        "initial-scale=1.0",
-    );
     html! {
-        "\n"
-        //"<!-- metadata -->"
-        meta charset = "utf-8";
-        "\n"
-        meta name = "viewport" content = (viewport);
         "\n"
         title { (metadata.title) }
         "\n"

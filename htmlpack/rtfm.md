@@ -54,6 +54,7 @@ The config has one top-level key, `pack`. All sub-keys are optional.
 ```
 pack:
   runtime:    RuntimeConfig             # which runtime assets histos injects
+  head:       String                    # HTML shard path or URL, top of <head>
   metadata:   MetadataConfig            # <head> metadata
   favicon:    List[String]              # SVG paths or URLs; histos uses the first only
   apple_icon: List[String]              # PNG paths or URLs; histos uses the first only
@@ -80,10 +81,24 @@ All keys are optional strings. `title` defaults to `"histos"`.
 
 | Key           | Emits |
 |---------------|-------|
-| `title`       | `<title>` and `<meta name="title">` |
+| `title`       | `<title>` |
 | `author`      | `<meta name="author">` |
 | `description` | `<meta name="description">` |
 | `keywords`    | `<meta name="keywords">` |
+
+### `pack.head`
+
+One path or URL to an HTML shard. Histos inlines the shard at the top of `<head>`, as is. Do not include the `<head>` and `</head>` tags.
+
+Histos always emits `<meta charset="utf-8">` first, because the output file is always UTF-8. Do not put a charset tag in the shard. A shard replaces the default viewport tag. An empty file counts as no shard, and histos emits the default viewport tag.
+
+Histos always emits the `pack.metadata` tags after the shard, with defaults when `pack.metadata` is not set. Do not put `<title>` or `<meta name="author|description|keywords">` in the shard. Histos emits these tags already.
+
+Histos removes a byte order mark (BOM) at the start of the shard.
+
+```yaml
+head: ./head.html
+```
 
 ### `pack.favicon`, `pack.apple_icon`, `pack.css`, `pack.html`, `pack.scripts`
 

@@ -1,5 +1,9 @@
 ## todo next
-- [] custom head metadata? lang=en
+- [] check dep veersions
+- [] streaming decoder
+- [x] custom head metadata (head shard)
+- [] much better readme
+- [] top html tag lang=en
 - [] proper errors and propagation
 - [] finish docs for what is missing?
 - [] add .ico support for favicon 

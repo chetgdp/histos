@@ -25,6 +25,7 @@ pub struct YamlRoot {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct YamlPack {
     pub runtime:        Option<YamlRuntime>,
+    pub head:           Option<String>,
     pub metadata:       Option<YamlMetadata>,
     pub favicon:        Option<Vec<String>>,      //Option<YamlAssets>,
     pub apple_icon:     Option<Vec<String>>,

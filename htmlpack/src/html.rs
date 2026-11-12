@@ -28,6 +28,9 @@ pub struct HtmlDoc {
 
 #[derive(Debug)]
 pub struct HtmlHead {
+    /// Raw HTML inlined at the top of `<head>`, after the charset tag. Empty
+    /// means histos emits the default `viewport` tag instead.
+    pub head_shard: String,
     pub metadata: HtmlMetadata,
     // assets
     pub favicon: Vec<EncodedIcon>,
@@ -137,12 +140,15 @@ impl HtmlDoc {
     /// ```
     /// # use histos::html::HtmlDoc;
     /// let doc = HtmlDoc::new(
+    ///     "".into(),
     ///     "My App".into(), "Author".into(), "desc".into(), "kw".into(),
     ///     vec![], vec![], vec![], vec![], vec![], vec![],
     /// );
     /// ```
         pub fn new(
         // head
+        // extra shard
+        head_shard: String,
         title: String,
         author: String,
         description: String,
@@ -157,6 +163,7 @@ impl HtmlDoc {
     ) -> Self { 
         Self {
             head: HtmlHead {
+                head_shard,
                 metadata: HtmlMetadata {
                     title,
                     author,
@@ -208,6 +215,7 @@ impl HtmlDoc {
     // need empty htmldoc
     pub fn empty() -> Self {
         Self::new(
+            "".into(),          // head
             "histos".into(),    // title
             "".into(),          // author
             "".into(),          // description

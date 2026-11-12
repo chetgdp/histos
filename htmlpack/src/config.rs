@@ -74,6 +74,9 @@ impl CompressionType {
 #[derive(Debug)]
 pub struct PackConfig {
     pub runtime:        RuntimeConfig,
+    /// HTML shard inlined at the top of `<head>`, after the charset tag. When
+    /// set, it replaces the default `viewport` tag.
+    pub head:           Option<AssetSource>,
     pub metadata:       MetadataConfig,
     pub favicon:        Vec<AssetSource>,
     pub apple_icon:     Vec<AssetSource>,
@@ -115,6 +118,7 @@ impl Default for PackConfig {
     fn default() -> Self {
         Self {
             runtime:        RuntimeConfig::default(),
+            head:           None,
             metadata:       MetadataConfig::default(),
             favicon:        Vec::new(),
             apple_icon:     Vec::new(),
@@ -171,6 +175,8 @@ impl TryFrom<YamlPack> for PackConfig {
             runtime:    yaml.runtime
                             .map(RuntimeConfig::from)
                             .unwrap_or_default(),
+
+            head:       yaml.head.map(determine_asset_source),
 
             metadata:   yaml.metadata
                             .map(MetadataConfig::from)
@@ -442,6 +448,24 @@ impl PackConfig {
             core,
             decoder,
         };
+        self
+    }
+
+    /// Sets the HTML shard inlined at the top of `<head>`. A later call
+    /// replaces the earlier shard.
+    ///
+    /// # Errors
+    ///
+    /// This function is infallible. Fetch errors surface later in [`PackConfig::build`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use histos::config::PackConfig;
+    /// let config = PackConfig::new().set_head("head.html".into());
+    /// ```
+    pub fn set_head(mut self, path: String) -> Self {
+        self.head = Some(determine_asset_source(path));
         self
     }
 

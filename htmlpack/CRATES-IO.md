@@ -74,6 +74,7 @@ pack:
 | Key | Description |
 |-----|-------------|
 | `pack.runtime` | Which runtime parts histos injects: loader, decoder, loading icon |
+| `pack.head` | HTML shard path or URL. Inlined at the top of `<head>`, after the charset tag. Replaces the default viewport tag |
 | `pack.metadata` | `<head>` metadata: title, author, description, keywords |
 | `pack.favicon` | SVG paths or URLs. Histos uses the first as `<link rel="icon">` |
 | `pack.apple_icon` | PNG paths or URLs. Histos uses the first as `<link rel="apple-touch-icon">` |

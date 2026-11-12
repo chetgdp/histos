@@ -453,3 +453,8 @@ wait why do I care about this yet? why not design the piece of code that does th
 Did a bunch of stuff to change &Path and PathBuf. (lowkey forgot why lol) (I think &Pathbuf is dumb?)
 
 Added apple_icon for iOS homescreen.
+
+## late 2026
+been working with pair mode, barely, jsut doing stuff here and there, I could do more but I've limited myself to pair mode style and then I have to write everything by hand, but actually I can tell it helps. For example we are adding this head metadata mode where you can just write it out as html, but it has me rethinking the whole previous way we added metadata prior.
+
+what the shard does is just add whatever html you want inside the `<head></head>` tags. I will have to stew on the best way to do this, there is the most possible variability in the head in terms of what people want to put there.

@@ -161,6 +161,7 @@ fn local_paths(c: &PackConfig) -> Vec<PathBuf> {
         .collect();
 
     let paths = [
+        c.head.as_slice(),
         &c.favicon, 
         &c.apple_icon, 
         &c.styles, 
@@ -331,6 +332,7 @@ impl PackConfig {
             .map(|module| module.glue.clone())
             .collect();
 
+        let head_bytes = fetcher::fetch_all_sources(self.head.into_iter().collect()).await?;
         let favicon_bytes = fetcher::fetch_all_sources(self.favicon).await?;
         let apple_icon_bytes = fetcher::fetch_all_sources(self.apple_icon).await?;
         let style_bytes = fetcher::fetch_all_sources(self.styles).await?;
@@ -342,6 +344,11 @@ impl PackConfig {
         script_bytes.extend(wasm_glue_bytes);
 
         // OPERATION 3: PROCESS
+        // remove BOM in head this is important per the html spec
+        let head_shard = process_text(head_bytes)?
+                            .concat()
+                            .trim_start_matches('\u{FEFF}')
+                            .to_owned();
         let favicons = process_icons(favicon_bytes)?;
         let apple_icons = process_apple_icons(apple_icon_bytes)?;
         //let styles = process_styles(style_bytes)?;
@@ -369,6 +376,7 @@ impl PackConfig {
         // create the htmldoc representation
         let htmldoc = HtmlDoc::new(
             // head
+            head_shard,
             // metadata
             self.metadata.title,
             self.metadata.author,
